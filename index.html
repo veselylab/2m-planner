@@ -9,13 +9,13 @@
 <meta name="apple-mobile-web-app-title" content="2m Planner">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="Plánovač 2m spojení pro ruční stanici: kam jet, kam mířit, jaká bude rezerva.">
-<title>2m Planner · OK1JDV</title>
+<title>2m Planner v2.2 · OK1JDV</title>
 <script>
   (function(){try{var t=localStorage.getItem('pl2m-theme');}catch(e){}
   document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})();
 </script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
 <style>
 :root{
   --bg:#f2f3f0; --card:#ffffff; --ink:#12171c; --muted:#5d6872; --line:#dde2e5; --soft:#eef0ec;
@@ -46,7 +46,7 @@ button{cursor:pointer}
 .brand b{display:block;font-size:16px;line-height:1.1}
 .brand small{color:var(--muted);font-size:12px}
 .hdr-act{display:flex;gap:6px}
-.icon{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:17px;display:grid;place-items:center}
+.icon{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-size:17px;display:grid;place-items:center}
 
 /* map */
 .mapwrap{position:relative}
@@ -62,7 +62,7 @@ button{cursor:pointer}
 
 /* tabs */
 .tabs{position:sticky;top:var(--hdr);z-index:1100;display:flex;gap:4px;padding:8px 14px;background:var(--bg);border-bottom:1px solid var(--line)}
-.tabs button{flex:1;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:600;color:var(--muted)}
+.tabs button{flex:1;height:46px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:600;color:var(--muted)}
 .tabs button.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
 .tabs button .badge{display:inline-block;min-width:18px;height:18px;line-height:18px;border-radius:9px;background:var(--acc);color:var(--acc-ink);font-size:11px;margin-left:5px;padding:0 5px}
 
@@ -90,7 +90,7 @@ input:focus,select:focus{outline:2px solid var(--acc);outline-offset:-1px}
 .sug small{display:block;color:var(--muted);font-size:12px}
 .muted{color:var(--muted);font-size:13px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.chip{height:34px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--card);font-size:14px;font-weight:600}
+.chip{height:44px;padding:0 12px;border-radius:17px;border:1px solid var(--line);background:var(--card);font-size:14px;font-weight:600}
 .chip.on{background:var(--ink);color:var(--card);border-color:var(--ink)}
 .lbl{font-size:12px;color:var(--muted);font-weight:600;margin:12px 0 6px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
@@ -143,7 +143,7 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
 .aim .k{font-size:11.5px;color:var(--muted)}
 .sp-meta{font-size:13px;color:var(--muted);margin-top:10px}
 .sp-act{display:flex;gap:6px;margin-top:10px}
-.sp-act a,.sp-act button{flex:1;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;text-decoration:none;color:var(--ink);font-weight:600;font-size:14px}
+.sp-act a,.sp-act button{flex:1;height:46px;border-radius:10px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;text-decoration:none;color:var(--ink);font-weight:600;font-size:14px}
 .sp-act .go{background:var(--ink);color:var(--card);border-color:var(--ink)}
 .more{width:100%;height:42px;border-radius:10px;border:1px dashed var(--line);background:transparent;color:var(--muted);font-weight:600}
 
@@ -184,7 +184,7 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
   <header class="top" id="top">
     <div class="brand">
       <span class="logo">2M</span>
-      <div><b>Planner spojení</b><small>kam jet · kam mířit · jaká rezerva</small></div>
+      <div><b>2m Planner <small>v2.2</small></b><small>stanoviště · azimut · modelová rezerva</small></div>
     </div>
     <div class="hdr-act">
       <button class="icon" id="shareBtn" title="Sdílet plán odkazem" aria-label="Sdílet plán">⤴</button>
@@ -196,10 +196,10 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
     <div id="map"></div>
     <div class="pick-banner" id="pickBanner" hidden><span id="pickTxt">Ťukni do mapy</span><button id="pickCancel">Zrušit</button></div>
     <div class="legend" id="legend" hidden>
-      <span><i style="background:#15803d"></i>jisté</span>
-      <span><i style="background:#65a30d"></i>mělo by</span>
-      <span><i style="background:#d97706"></i>hrana</span>
-      <span><i style="background:#dc2626"></i>ne</span>
+      <span><i style="background:#15803d"></i>vysoká</span>
+      <span><i style="background:#65a30d"></i>dobrá</span>
+      <span><i style="background:#d97706"></i>nízká</span>
+      <span><i style="background:#dc2626"></i>pod prahem</span>
       <label><input type="checkbox" id="heatTgl" checked>vrstva</label>
     </div>
   </div>
@@ -262,14 +262,14 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
         <details class="adv">
           <summary>Pokročilé</summary>
           <div class="grid3">
-            <label>Kmitočet<span><input id="fIn" type="number" step="0.005" inputmode="decimal"> MHz</span></label>
+            <label>Kmitočet<span><input id="fIn" type="number" step="0.005" min="144" max="146" inputmode="decimal"> MHz</span></label>
             <label>k-faktor<span><input id="kIn" type="number" step="0.01" inputmode="decimal"></span></label>
             <label>Deklinace<span><input id="declIn" type="number" step="0.1" inputmode="decimal"> °</span></label>
           </div>
           <div class="grid3">
-            <label>Ostatní ztráty<span><input id="lossIn" type="number" step="0.5" inputmode="decimal"> dB</span></label>
+            <label>Pevné ztráty<span><input id="lossIn" type="number" step="0.5" inputmode="decimal"> dB</span></label>
             <label>Citlivost<span><input id="sensIn" type="number" step="1" inputmode="decimal" readonly> dBm</span></label>
-            <label>&nbsp;<span class="muted" style="font-size:12px">kabel, tělo, polarizace</span></label>
+            <label>&nbsp;<span class="muted" style="font-size:12px">kabel + odhad těla/polarizace; bez lesa a fadingu</span></label>
           </div>
           <p class="note">Citlivost podle módu: FM 0,18 µV (12 dB SINAD) ≈ −122 dBm, DV 0,2 µV (1 % BER) ≈ −121 dBm. Deklinace v ČR je kolem +5° (východní) — magnetický azimut = zeměpisný − deklinace.</p>
         </details>
@@ -278,18 +278,18 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
       <div class="card about">
         <details class="adv">
           <summary>Jak to počítám</summary>
-          <p><b>Terén:</b> výškový model AWS Terrain Tiles (SRTM / EU-DEM, ~25–50 m). Lesy a budovy v modelu nejsou — v lese počítej s dalšími 5–15 dB.</p>
-          <p><b>Šíření:</b> útlum volného prostoru + difrakce přes terén metodou Deygout (až 3 hrany, ITU-R P.526), zakřivení Země s k-faktorem 4/3. Žádné troposférické podmínky — reálně bývá spíš líp.</p>
-          <p><b>Rezerva</b> = přijatý signál − citlivost, horší ze dvou směrů. <b class="t-ok">≥ 20 dB jisté</b>, <b class="t-good">10–20 dB mělo by jít</b>, <b class="t-edge">0–10 dB na hraně</b>, <b class="t-bad">&lt; 0 nepůjde</b>.</p>
-          <p><b>Kopce a rozhledny</b> z OpenStreetMap (Overpass), u rozhleden počítám i z plošiny. Mapa OpenTopoMap, hledání míst Nominatim.</p>
-          <p>Je to predikce, ne záruka. Na místě dolaď směr podle S-metru — HB9CV má široký lalok, ±20° nehraje roli.</p>
+          <p><b>Terén:</b> AWS Terrain Tiles (různé zdrojové DEM). Lesy ani budovy nejsou samostatně modelovány; rozlišení a přesnost závisí na oblasti.</p>
+          <p><b>Šíření:</b> útlum volného prostoru + Delta-Bullington (ITU-R P.526-16, §4.5) včetně hladké Země. Zakřivení s k-faktorem, nepočítá se les, zástavba, fading, rušení ani troposférické změny.</p>
+          <p><b>Modelová rezerva</b> = příjem − laboratorní citlivost, horší směr. <b class="t-ok">≥ 20 dB vysoká</b>, <b class="t-good">10–20 dB dobrá</b>, <b class="t-edge">0–10 dB nízká</b>, <b class="t-bad">&lt; 0 dB pod prahem</b>. Neměří pravděpodobnost QSO.</p>
+          <p><b>Kopce a rozhledny</b> z OpenStreetMap (Overpass), ale výpočet je vždy ze zadané výšky antény nad místním terénem. Přístupnost stanoviště je nutné ověřit. Mapa OpenTopoMap / OSM; hledání Nominatim.</p>
+          <p>Je to neověřená predikce, nikoli záruka. Na místě dolaď směr a polarizaci, zvaž překážky v okolí a chybovost DEM.</p><p>Model: <a href="https://www.itu.int/rec/R-REC-P.526/en" target="_blank" rel="noopener noreferrer">ITU-R P.526</a>; terén: Mapzen / AWS Terrain Tiles. Veřejné služby mohou být nedostupné.</p>
         </details>
       </div>
     </section>
 
     <!-- VÝSLEDKY -->
     <section class="panel" id="tab-res">
-      <div id="resBody" class="empty">Zatím nic. Vyplň zadání a dej <b>Najdi místo</b>.</div>
+      <div id="resBody" class="empty">Zatím nic. Vyplň zadání a dej <b>Najdi místo</b>. Výpočet je model, ne záruka QSO.</div>
     </section>
 
     <!-- PROFIL -->
@@ -305,7 +305,7 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
 <script>
 'use strict';
 /* =========================================================
-   2m Planner — plánovač VKV spojení pro ruční stanici
+   2m Planner v2.2 — plánovač VKV spojení, model ITU-R P.526-16
    ========================================================= */
 const R_E = 6371008.8;
 const $ = s => document.querySelector(s);
@@ -327,6 +327,19 @@ function brg(a, b) {
   const p1 = toRad(a.lat), p2 = toRad(b.lat), dl = toRad(b.lon - a.lon);
   const y = Math.sin(dl) * Math.cos(p2), x = Math.cos(p1) * Math.sin(p2) - Math.sin(p1) * Math.cos(p2) * Math.cos(dl);
   return (toDeg(Math.atan2(y, x)) + 360) % 360;
+}
+// Sférická interpolace po ortodromě; vzorkování DEM nesmí být po loxodromě.
+function greatCircleSampler(a, b) {
+  const p = u => { const la = toRad(u.lat), lo = toRad(u.lon), c = Math.cos(la); return [c*Math.cos(lo), c*Math.sin(lo), Math.sin(la)]; };
+  const A = p(a), B = p(b);
+  const dp = Math.max(-1, Math.min(1, A[0]*B[0] + A[1]*B[1] + A[2]*B[2]));
+  const omega = Math.acos(dp), so = Math.sin(omega);
+  return t => {
+    if (omega < 1e-8) return {lat: a.lat + t*(b.lat-a.lat), lon: a.lon + t*(b.lon-a.lon)};
+    const w1 = Math.sin((1-t)*omega)/so, w2 = Math.sin(t*omega)/so;
+    const x=A[0]*w1+B[0]*w2, y=A[1]*w1+B[1]*w2, z=A[2]*w1+B[2]*w2;
+    return {lat:toDeg(Math.atan2(z, Math.hypot(x,y))), lon:toDeg(Math.atan2(y,x))};
+  };
 }
 const DIR8 = ['S', 'SV', 'V', 'JV', 'J', 'JZ', 'Z', 'SZ'];
 const dir8 = b => DIR8[Math.round(b / 45) % 8];
@@ -365,6 +378,7 @@ function parsePoint(q) {
   const re = /(\d{1,3}(?:[.,]\d+)?)\s*°\s*(?:(\d{1,2}(?:[.,]\d+)?)\s*['′’]\s*)?(?:(\d{1,2}(?:[.,]\d+)?)\s*(?:["″”]|'')\s*)?([sj]\.?\s*š\.?|[vz]\.?\s*d\.?|[NSEW])?/gi;
   const m = [...s.matchAll(re)];
   if (m.length === 2) {
+    if(m.some(x=>(x[2]&&num(x[2])>=60)||(x[3]&&num(x[3])>=60)))return null;
     const v = m.map(x => {
       let d = num(x[1]) + (x[2] ? num(x[2]) / 60 : 0) + (x[3] ? num(x[3]) / 3600 : 0);
       const hsp = (x[4] || '').toUpperCase().replace(/[\s.]/g, '');
@@ -396,7 +410,7 @@ function unproj(x, y, z) {
 const TILE_URL = (z, x, y) => `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/${z}/${x}/${y}.png`;
 const tileCache = new Map();
 const DEM = {z: null, tx0: 0, ty0: 0, ntx: 0, nty: 0, W: 0, H: 0, data: null};
-const MAX_TILES = 64;
+const MAX_TILES = 64, MAX_TILE_CACHE = 128;
 
 function tilesFor(bb, z) {
   const [x0, y0] = proj(bb.n, bb.w, z), [x1, y1] = proj(bb.s, bb.e, z);
@@ -405,34 +419,46 @@ function tilesFor(bb, z) {
 function pickZoom(bb) {
   for (let z = 12; z >= 7; z--) {
     const t = tilesFor(bb, z);
-    if ((t.tx1 - t.tx0 + 1) * (t.ty1 - t.ty0 + 1) <= MAX_TILES) return z;
+    const n = (t.tx1-t.tx0+1)*(t.ty1-t.ty0+1);
+    if (n >= 1 && n <= MAX_TILES) return z;
   }
-  return 7;
+  throw new RangeError('Oblast vyžaduje příliš mnoho DEM dlaždic (limit 64).');
 }
+
 async function fetchTile(z, x, y) {
   const key = `${z}/${x}/${y}`;
-  if (tileCache.has(key)) return tileCache.get(key);
+  if (tileCache.has(key)) {
+    const v = tileCache.get(key); tileCache.delete(key); tileCache.set(key, v);
+    return v;
+  }
   let err;
   for (let a = 0; a < 3; a++) {
+    let bmp;
     try {
-      const res = await fetch(TILE_URL(z, x, y), {mode: 'cors'});
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 12000);
+      let res;
+      try { res = await fetch(TILE_URL(z, x, y), {mode: 'cors', signal:ctl.signal}); }
+      finally { clearTimeout(tm); }
+      if (!res.ok) throw new Error('DEM HTTP ' + res.status);
       const blob = await res.blob();
-      let bmp;
       try { bmp = await createImageBitmap(blob, {colorSpaceConversion: 'none', premultiplyAlpha: 'none'}); }
       catch (e) { bmp = await createImageBitmap(blob); }
+      if(bmp.width!==256||bmp.height!==256)throw new Error('DEM: neočekávaný rozměr dlaždice');
       const cv = document.createElement('canvas'); cv.width = 256; cv.height = 256;
       const cx = cv.getContext('2d', {willReadFrequently: true});
       cx.drawImage(bmp, 0, 0);
       const px = cx.getImageData(0, 0, 256, 256).data;
       const arr = new Float32Array(65536);
-      for (let i = 0, j = 0; i < 65536; i++, j += 4) arr[i] = px[j] * 256 + px[j + 1] + px[j + 2] / 256 - 32768;
+      for (let i=0,j=0;i<65536;i++,j+=4) arr[i]=px[j]*256+px[j+1]+px[j+2]/256-32768;
       tileCache.set(key, arr);
+      while (tileCache.size > MAX_TILE_CACHE) tileCache.delete(tileCache.keys().next().value);
       return arr;
-    } catch (e) { err = e; await new Promise(r => setTimeout(r, 400 * (a + 1))); }
+    } catch (e) { err=e; if(a<2) await new Promise(r=>setTimeout(r,350*(a+1))); }
+    finally { if (bmp) bmp.close(); }
   }
   throw err;
 }
+
 function demCoversBB(bb) {
   if (!DEM.data) return false;
   const t = tilesFor(bb, DEM.z);
@@ -442,6 +468,7 @@ async function ensureDEM(bb, onProg) {
   const z = pickZoom(bb);
   if (DEM.data && DEM.z === z && demCoversBB(bb)) return;
   const t = tilesFor(bb, z), list = [];
+  if ((t.tx1-t.tx0+1)*(t.ty1-t.ty0+1) > MAX_TILES) throw new RangeError('Překročen limit DEM dlaždic');
   for (let y = t.ty0; y <= t.ty1; y++) for (let x = t.tx0; x <= t.tx1; x++) list.push([x, y]);
   const got = new Map(); let i = 0, done = 0;
   const worker = async () => {
@@ -463,8 +490,9 @@ async function ensureDEM(bb, onProg) {
 function demPx(gx, gy) {
   let x = gx - DEM.tx0 * 256 - 0.5, y = gy - DEM.ty0 * 256 - 0.5;
   const W = DEM.W, H = DEM.H;
-  if (x < 0) x = 0; if (y < 0) y = 0;
-  if (x > W - 1.001) x = W - 1.001; if (y > H - 1.001) y = H - 1.001;
+  if (!Number.isFinite(x) || !Number.isFinite(y) || x < -0.51 || y < -0.51 || x > W - 0.49 || y > H - 0.49)
+    throw new RangeError('Vzorkování mimo stažený DEM');
+  x = Math.max(0, Math.min(W - 1.001, x)); y = Math.max(0, Math.min(H - 1.001, y));
   const x0 = x | 0, y0 = y | 0, fx = x - x0, fy = y - y0, i = y0 * W + x0, d = DEM.data;
   return (d[i] * (1 - fx) + d[i + 1] * fx) * (1 - fy) + (d[i + W] * (1 - fx) + d[i + W + 1] * fx) * fy;
 }
@@ -484,55 +512,133 @@ function circleBB(c, r) {
 // ITU-R P.526 single knife-edge loss
 const J = v => v <= -0.78 ? 0 : 6.9 + 20 * Math.log10(Math.sqrt((v - 0.1) ** 2 + 1) + v - 0.1);
 const BUF = new Float64Array(8192);
-function maxV(e, i0, i1, h0, h1, dx, lam) {
-  let best = -1e9, bi = -1;
-  if (i1 - i0 < 2) return [best, bi];
-  const L = (i1 - i0) * dx;
-  for (let i = i0 + 1; i < i1; i++) {
-    const d1 = (i - i0) * dx, d2 = (i1 - i) * dx;
-    const v = (e[i] - (h0 + (h1 - h0) * d1 / L)) * Math.sqrt(2 * L / (lam * d1 * d2));
-    if (v > best) { best = v; bi = i; }
+// ITU-R P.526-16, Annex 1: §4.5.1 Bullington, §3.2 spherical Earth, §4.5.2 Delta-Bullington.
+// Distances in kilometres in Bullington slopes, heights in metres, wavelength in metres.
+function bullingtonAt(n, dKm, lam, hTs, hRs, aeM, sample) {
+  const step=dKm/(n-1), curve=500/(aeM/1000), str=(hRs-hTs)/dKm;
+  let sti=-Infinity, sri=-Infinity, vmax=-Infinity, vi=-1;
+  for(let i=1;i<n-1;i++) {
+    const di=i*step, mid=sample(i)+curve*di*(dKm-di);
+    sti=Math.max(sti,(mid-hTs)/di);
+    sri=Math.max(sri,(mid-hRs)/(dKm-di));
+    const above=mid-(hTs*(dKm-di)+hRs*di)/dKm;
+    const v=above*Math.sqrt(0.002*dKm/(lam*di*(dKm-di)));
+    if(v>vmax){vmax=v;vi=i;}
   }
-  return [best, bi];
+  let vb=vmax;
+  if(sti>=str) {
+    const denom=sti+sri;
+    if(Math.abs(denom)>1e-12) {
+      const db=Math.max(dKm*1e-8,Math.min(dKm*(1-1e-8),(hRs-hTs+sri*dKm)/denom));
+      const hBull=hTs+sti*db-(hTs*(dKm-db)+hRs*db)/dKm;
+      vb=hBull*Math.sqrt(0.002*dKm/(lam*db*(dKm-db)));
+    }
+  }
+  const luc=J(vb);
+  return {loss:luc+(1-Math.exp(-luc/6))*(10+0.02*dKm),index:vi,v:vb};
 }
-/* a,b: {lat,lon,h(agl)}; P: params. Returns geometry + losses. */
-function evalLink(a, b, P, nMax, keep) {
-  const z = DEM.z;
-  const [ax, ay] = proj(a.lat, a.lon, z), [bx, by] = proj(b.lat, b.lon, z);
-  const D = hav(a, b);
-  if (D < 60) return null;
-  const n = Math.max(24, Math.min(nMax, Math.ceil(Math.hypot(bx - ax, by - ay)) + 1));
-  const e = keep ? new Float64Array(n) : BUF, g = keep ? new Float64Array(n) : null;
-  const dx = D / (n - 1), kR2 = 2 * P.k * R_E;
-  for (let i = 0; i < n; i++) {
-    const t = i / (n - 1), h = demPx(ax + (bx - ax) * t, ay + (by - ay) * t), x = i * dx;
-    e[i] = h + x * (D - x) / kR2;
-    if (g) g[i] = h;
+function sphericalOver(dKm, h1, h2, aeM, f) {
+  const a=aeM/1000, eps=15, sigma=0.005, Khor=0.36*Math.pow(a*f,-1/3)*Math.pow((eps-1)**2+(18000*sigma/f)**2,-0.25);
+  const K=Khor*Math.hypot(eps,18000*sigma/f); // vertikální polarizace / pevná půda
+  const beta=1; // §3.1.1.2: vertikální polarizace >20 MHz nad zemí
+  const X=2.188*beta*Math.cbrt(f)*Math.pow(a,-2/3)*dKm;
+  const Y=h=>9.575e-3*beta*Math.pow(f,2/3)*Math.pow(a,-1/3)*Math.max(0,h);
+  const F=X>=1.6?11+10*Math.log10(X)-17.6*X:-20*Math.log10(X)-5.6488*Math.pow(X,1.425);
+  const G=y=>{const B=beta*y;const raw=B>2?17.6*Math.sqrt(B-1.1)-5*Math.log10(B-1.1)-8:20*Math.log10(Math.max(1e-30,B+0.1*B**3));return Math.max(raw,2+20*Math.log10(K));};
+  return Math.max(0,-F-G(Y(h1))-G(Y(h2)));
+}
+function sphericalLoss(dKm,h1,h2,aeM,f,lam) {
+  h1=Math.max(0,h1);h2=Math.max(0,h2);
+  const d=dKm*1000, los=Math.sqrt(2*aeM)*(Math.sqrt(h1)+Math.sqrt(h2));
+  if(d>=los) return sphericalOver(dKm,h1,h2,aeM,f);
+  if(h1+h2<1e-9) return sphericalOver(dKm,h1,h2,aeM,f);
+  const m=d*d/(4*aeM*(h1+h2)), c=(h1-h2)/(h1+h2);
+  const arg=Math.max(-1,Math.min(1,1.5*c*Math.sqrt(3*m/(m+1)**3)));
+  const b=2*Math.sqrt((m+1)/(3*m))*Math.cos(Math.PI/3+Math.acos(arg)/3);
+  const d1=d*(1+b)/2, d2=d-d1;
+  const h=((h1-d1*d1/(2*aeM))*d2+(h2-d2*d2/(2*aeM))*d1)/d;
+  const hreq=0.552*Math.sqrt(d1*d2*lam/d);
+  if(h>=hreq) return 0;
+  const aem=0.5*(d/(Math.sqrt(h1)+Math.sqrt(h2)))**2;
+  const Ah=sphericalOver(dKm,h1,h2,aem,f);
+  return Math.max(0,(1-h/hreq)*Ah);
+}
+function deltaBullington(e,n,D,lam,k,f,hA,hB) {
+  const d=D/1000, aeM=k*R_E, step=d/(n-1);
+  const sample=i=> e[i]- (i/(n-1))*((n-1-i)/(n-1))*D*D/(2*aeM);
+  const actual=bullingtonAt(n,d,lam,hA,hB,aeM,sample);
+  let v1=0,v2=0,obs=-Infinity,alphT=-Infinity,alphR=-Infinity;
+  for(let i=1;i<n;i++) {
+    const di=i*step, dj=(i-1)*step, hi=sample(i), hj=sample(i-1);
+    v1+=(di-dj)*(hi+hj);
+    v2+=(di-dj)*(hi*(2*di+dj)+hj*(di+2*dj));
   }
-  const hA = e[0] + a.h, hB = e[n - 1] + b.h, lam = 299.792458 / P.f;
-  let diff = 0; const edges = [];
-  const [vm, im] = maxV(e, 0, n - 1, hA, hB, dx, lam);
-  if (vm > -0.78) {
-    diff += J(vm); edges.push([im, J(vm)]);
-    const [vl, il] = maxV(e, 0, im, hA, e[im], dx, lam);
-    if (vl > -0.78) { diff += J(vl); edges.push([il, J(vl)]); }
-    const [vr, ir] = maxV(e, im, n - 1, e[im], hB, dx, lam);
-    if (vr > -0.78) { diff += J(vr); edges.push([ir, J(vr)]); }
+  for(let i=1;i<n-1;i++) {
+    const di=i*step, hi=sample(i), obi=hi-(hA*(d-di)+hB*di)/d;
+    obs=Math.max(obs,obi);alphT=Math.max(alphT,obi/di);alphR=Math.max(alphR,obi/(d-di));
   }
-  const fspl = 32.45 + 20 * Math.log10(P.f) + 20 * Math.log10(D / 1000);
-  const r = {D, fspl, diff, loss: fspl + diff, vm, clr: -vm / Math.SQRT2, los: vm < 0,
-    gA: e[0], gB: e[n - 1], hA, hB, n, dx, edges, az: brg(a, b),
-    elev: toDeg(Math.atan((hB - hA) / D - D / kR2))};
-  if (keep) { r.e = e; r.g = g; r.lam = lam; r.kR2 = kR2; }
+  let st=(2*v1*d-v2)/(d*d),sr=(v2-v1*d)/(d*d);
+  if(obs>0) {
+    const den=alphT+alphR;
+    if(den>0){st-=obs*alphT/den;sr-=obs*alphR/den;}
+  }
+  const hh1=Math.max(0,hA-Math.min(st,sample(0)));
+  const hh2=Math.max(0,hB-Math.min(sr,sample(n-1)));
+  const smooth=bullingtonAt(n,d,lam,hh1,hh2,aeM,()=>0);
+  const sph=sphericalLoss(d,hh1,hh2,aeM,f,lam);
+  return {loss:actual.loss+Math.max(0,sph-smooth.loss),actual:actual.loss,smooth:smooth.loss,sphere:sph};
+}
+/* a,b: {lat,lon,h[AGL]}; 1–60 m: FSPL-only s upozorněním na nevyhodnocený lokální terén. */
+function evalLink(a,b,P,nMax,keep) {
+  const z=DEM.z, [ax,ay]=proj(a.lat,a.lon,z), [bx,by]=proj(b.lat,b.lon,z), D=hav(a,b);
+  if(!Number.isFinite(D)||D<1)return null; // Souřadnice se překrývají nebo jsou neplatné.
+  const short=D<60;
+  const n=short?2:Math.max(24,Math.min(nMax,Math.ceil(Math.hypot(bx-ax,by-ay))+1));
+  const e=keep?new Float64Array(n):BUF, g=keep?new Float64Array(n):null;
+  const dx=D/(n-1), kR2=2*P.k*R_E, sampler=greatCircleSampler(a,b);
+  for(let i=0;i<n;i++){
+    const t=i/(n-1), ll=sampler(t), [gx,gy]=proj(ll.lat,ll.lon,z), h=demPx(gx,gy), x=i*dx;
+    e[i]=h+x*(D-x)/kR2; if(g)g[i]=h;
+  }
+  const hA=e[0]+a.h,hB=e[n-1]+b.h,lam=299.792458/P.f;
+  let vm=-10,im=-1,edges=[];
+  if(!short){[vm,im]=maxV(e,0,n-1,hA,hB,dx,lam);}
+  const dLoss=short?{loss:0,actual:0,smooth:0,sphere:0}:deltaBullington(e,n,D,lam,P.k,P.f,hA,hB);
+  if(!Number.isFinite(dLoss.loss)||dLoss.loss<0)throw new RangeError('Neplatný difrakční útlum – zkontroluj výškový model');
+  if(keep&&im>=0&&vm>-0.78) {
+    edges.push([im,J(vm)]);
+    const [vl,il]=maxV(e,0,im,hA,e[im],dx,lam);
+    if(il>=0&&vl>-0.78) edges.push([il,J(vl)]);
+    const [vr,ir]=maxV(e,im,n-1,e[im],hB,dx,lam);
+    if(ir>=0&&vr>-0.78) edges.push([ir,J(vr)]);
+  }
+  const fspl=32.45+20*Math.log10(P.f)+20*Math.log10(D/1000);
+  const uncertain=im>=0&&vm>-0.78&&Math.min(im,n-1-im)*dx<2*mpp((a.lat+b.lat)/2);
+  const r={D,fspl,diff:dLoss.loss,loss:fspl+dLoss.loss,delta:dLoss,vm,uncertain,clr:im<0?1:-vm/Math.SQRT2,los:im<0||vm<0,
+    gA:e[0],gB:e[n-1],hA,hB,n,dx,edges,az:brg(a,b),short,
+    elev:toDeg(Math.atan((hB-hA)/D-D/kR2))};
+  if(keep){r.e=e;r.g=g;r.lam=lam;r.kR2=kR2;}
   return r;
 }
+function maxV(e,i0,i1,h0,h1,dx,lam) {
+  let best=-1e9,bi=-1;
+  if(i1-i0<2)return [best,bi];
+  const L=(i1-i0)*dx;
+  for(let i=i0+1;i<i1;i++){
+    const d1=(i-i0)*dx,d2=(i1-i)*dx;
+    const v=(e[i]-(h0+(h1-h0)*d1/L))*Math.sqrt(2*L/(lam*d1*d2));
+    if(v>best){best=v;bi=i;}
+  }
+  return [best,bi];
+}
+
 function budget(loss, P) {
   const up = dbm(P.me.p) + P.me.g + P.him.g - loss - P.other;   // u protistanice
   const down = dbm(P.him.p) + P.him.g + P.me.g - loss - P.other; // u mě
   return {rxHim: up, rxMe: down, up: up - P.sens, down: down - P.sens, m: Math.min(up, down) - P.sens};
 }
-const cat = m => { m = Math.round(m); return m >= 20 ? 'ok' : m >= 10 ? 'good' : m >= 0 ? 'edge' : 'bad'; };
-const CAT_TXT = {ok: 'jisté', good: 'mělo by jít', edge: 'na hraně', bad: 'nepůjde'};
+const cat = m => m >= 20 ? 'ok' : m >= 10 ? 'good' : m >= 0 ? 'edge' : 'bad';
+const CAT_TXT = {ok: 'vysoká modelová rezerva', good: 'dobrá modelová rezerva', edge: 'nízká modelová rezerva', bad: 'pod laboratorním prahem'};
 const CAT_RANK = {ok: 0, good: 1, edge: 2, bad: 3};
 const CAT_RGB = {ok: [21, 128, 61], good: [101, 163, 13], edge: [217, 119, 6], bad: [220, 38, 38]};
 function sUnits(p) { const o = p + 93; if (o >= 0) return o < 1 ? 'S9' : 'S9+' + Math.round(o); return 'S' + Math.max(0, Math.round(9 + o / 6)); }
@@ -550,21 +656,52 @@ let S = load();
 function load() {
   let s = {};
   try { s = JSON.parse(localStorage.getItem('pl2m') || '{}'); } catch (e) {}
-  const st = {...structuredClone(DEF), ...s, him: {...DEF.him, ...(s.him || {})}, me: {...DEF.me, ...(s.me || {})}};
+  const st = {...structuredClone(DEF), ...(s && typeof s==='object' && !Array.isArray(s)?s:{}), him: {...DEF.him, ...(s?.him && typeof s.him==='object'?s.him:{})}, me: {...DEF.me, ...(s?.me && typeof s.me==='object'?s.me:{})}};
   // shared link overrides
   try {
     const h = new URLSearchParams(location.hash.slice(1));
-    const pt = v => { if (!v) return null; const [lat, lon] = v.split(',').map(Number); return isFinite(lat) && isFinite(lon) ? {lat, lon} : null; };
+    const pt = v => { if (!v) return null; const parts=v.split(',');if(parts.length!==2||parts.some(x=>!x.trim()))return null;const [lat,lon]=parts.map(Number);return Number.isFinite(lat)&&Number.isFinite(lon)&&Math.abs(lat)<=85&&Math.abs(lon)<=180?{lat,lon}:null; };
     if (h.get('b')) { const p = pt(h.get('b')); if (p) st.B = {...p, name: h.get('bn') || 'Protistanice'}; }
     if (h.get('c')) { const p = pt(h.get('c')); if (p) st.C = {...p, name: h.get('cn') || 'Oblast'}; }
-    const nums = {r: 'r', f: 'f'}; for (const k in nums) if (h.get(k)) st[k] = +h.get(k);
-    if (h.get('hp')) st.him.p = +h.get('hp'); if (h.get('hg')) st.him.g = +h.get('hg'); if (h.get('hh')) st.him.h = +h.get('hh');
+    if (RADII.includes(Number(h.get('r')))) st.r=Number(h.get('r'));
+    if (h.has('f')) {const f=Number(h.get('f'));if(Number.isFinite(f)&&f>=144&&f<=146)st.f=f;}
+    if (h.has('k')) {const k=Number(h.get('k'));if(Number.isFinite(k)&&k>=0.5&&k<=4)st.k=k;}
+    if (h.has('o')) {const x=Number(h.get('o'));if(Number.isFinite(x)&&x>=0&&x<=80)st.other=x;}
+    if (h.has('de')) {const x=Number(h.get('de'));if(Number.isFinite(x)&&x>=-90&&x<=90)st.decl=x;}
+    for (const [k,part,field,lo,hi] of [['hp','him','p',0.01,1000],['hg','him','g',-30,40],['hh','him','h',0,1000],['mp','me','p',0.01,100],['mg','me','g',-30,40],['mh','me','h',0,1000]]) {
+      if(h.has(k)){const x=Number(h.get(k));if(Number.isFinite(x)&&x>=lo&&x<=hi)st[part][field]=x;}
+    }
     if (h.get('m') === 'DV' || h.get('m') === 'FM') st.mode = h.get('m');
   } catch (e) {}
+  st.recent=Array.isArray(st.recent)?st.recent.filter(x=>x&&Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&Math.abs(x.lat)<=85&&Math.abs(x.lon)<=180).slice(0,5):[];
+  st.r=RADII.includes(st.r)?st.r:10000;
+  if(!['FM','DV'].includes(st.mode))st.mode='FM';
+  // localStorage není důvěryhodnější než sdílený odkaz: normalizovat i jeho hodnoty.
+  const bounded=(value,def,lo,hi)=>typeof value==='number'&&Number.isFinite(value)&&value>=lo&&value<=hi?value:def;
+  st.f=bounded(st.f,DEF.f,144,146);st.k=bounded(st.k,DEF.k,0.5,4);
+  st.other=bounded(st.other,DEF.other,0,80);st.decl=bounded(st.decl,DEF.decl,-90,90);
+  for(const part of ['me','him'])for(const [key,lo,hi] of [['g',-30,40],['h',0,1000],['p',0.01,1000]])
+    st[part][key]=bounded(st[part][key],DEF[part][key],lo,hi);
+  if(![5,2.5,1,0.5,0.1].includes(st.me.p))st.me.p=DEF.me.p;
+  if(!ANT_ME.some(a=>a[0]===st.me.ant))st.me.ant=DEF.me.ant;
+  if(!ANT_HIM.some(a=>a[0]===st.him.ant))st.him.ant=DEF.him.ant;
+  for(const w of ['B','C']) {
+    const x=st[w];
+    if(!x||typeof x!=='object'||!Number.isFinite(x.lat)||!Number.isFinite(x.lon)||Math.abs(x.lat)>85||Math.abs(x.lon)>180)st[w]=null;
+    else st[w]={lat:x.lat,lon:x.lon,name:typeof x.name==='string'?x.name.slice(0,180):llToLoc(x.lat,x.lon,6)};
+  }
   return st;
 }
 let saveT;
 function save() { clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem('pl2m', JSON.stringify(S)); } catch (e) {} }, 200); }
+function configKey(){return JSON.stringify([S.B?.lat,S.B?.lon,S.C?.lat,S.C?.lon,S.r,S.me.p,S.me.g,S.me.h,S.him.p,S.him.g,S.him.h,S.mode,S.f,S.k,S.other]);}
+function invalidateResults(){
+  if(!RES&&!SEL)return;RES=null;SEL=null;PROF=null;
+  if(resLayer)resLayer.clearLayers();if(selLine&&map){map.removeLayer(selLine);selLine=null;}
+  $('#legend').hidden=true;$('#resBadge').hidden=true;
+  $('#resBody').className='empty';$('#resBody').innerHTML='Parametry se změnily — znovu spusť <b>Najdi místo</b>.';
+  $('#profBody').className='empty';$('#profBody').textContent='Profil není aktuální; spusť nový výpočet.';
+}
 function params() {
   return {f: S.f, k: S.k, other: S.other, sens: SENS[S.mode], me: {...S.me}, him: {...S.him}};
 }
@@ -586,10 +723,14 @@ function writeForm() {
 }
 function readNum(id, def) { const v = parseFloat(String($(id).value).replace(',', '.')); return isFinite(v) ? v : def; }
 function readForm() {
-  S.him.g = readNum('#hisG', S.him.g); S.him.p = Math.max(0.01, readNum('#hisP', S.him.p)); S.him.h = Math.max(0, readNum('#hisH', S.him.h));
-  S.me.g = readNum('#meG', S.me.g); S.me.p = readNum('#meP', S.me.p); S.me.h = Math.max(0, readNum('#meH', S.me.h));
-  S.f = Math.min(1300, Math.max(30, readNum('#fIn', S.f))); S.k = Math.min(4, Math.max(0.5, readNum('#kIn', S.k)));
-  S.decl = readNum('#declIn', S.decl); S.other = readNum('#lossIn', S.other);
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  S.him.g=clamp(readNum('#hisG',S.him.g),-30,40); S.him.p=clamp(readNum('#hisP',S.him.p),0.01,1000); S.him.h=clamp(readNum('#hisH',S.him.h),0,1000);
+  S.me.g=clamp(readNum('#meG',S.me.g),-30,40); S.me.p=readNum('#meP',S.me.p); S.me.h=clamp(readNum('#meH',S.me.h),0,1000);
+  S.f=clamp(readNum('#fIn',S.f),144,146); S.k=clamp(readNum('#kIn',S.k),0.5,4);
+  const oldDecl=S.decl;
+  S.decl = Math.max(-90,Math.min(90,readNum('#declIn', S.decl))); S.other = Math.max(0,Math.min(80,readNum('#lossIn', S.other)));
+  if(RES&&RES.key!==configKey())invalidateResults();
+  else if(RES&&oldDecl!==S.decl){renderResults();if(SEL)renderProfilePanel();}
   save();
 }
 function renderResolved(w) {
@@ -602,22 +743,18 @@ function renderChips() {
   $('#bChips').innerHTML = list.map((p, i) => `<button class="chip ${S.B && hav(S.B, p) < 300 ? 'on' : ''}" data-q="${i}">${esc(p.name)}</button>`).join('');
   $$('#bChips .chip').forEach(b => b.onclick = () => { const p = list[+b.dataset.q]; setPoint('B', p); $('#bIn').value = p.name; });
   $('#rChips').innerHTML = RADII.map(r => `<button class="chip ${S.r === r ? 'on' : ''}" data-r="${r}">${r / 1000} km</button>`).join('');
-  $$('#rChips .chip').forEach(b => b.onclick = () => { S.r = +b.dataset.r; save(); renderChips(); drawInputs(); });
+  $$('#rChips .chip').forEach(b=>b.onclick=()=>{S.r=+b.dataset.r;invalidateResults();save();renderChips();drawInputs();});
 }
 function setPoint(w, p) {
-  S[w] = {lat: +(+p.lat).toFixed(6), lon: +(+p.lon).toFixed(6), name: p.name || llToLoc(p.lat, p.lon, 6)};
+  if(running){toast('Běží výpočet; změň bod až po dokončení.');return;}
+  if(!p||!Number.isFinite(+p.lat)||!Number.isFinite(+p.lon)||Math.abs(+p.lat)>85||Math.abs(+p.lon)>180){toast('Neplatné zeměpisné souřadnice.');return;}
+  S[w] = {lat: +(+p.lat).toFixed(6), lon: +(+p.lon).toFixed(6), name: String(p.name || llToLoc(p.lat, p.lon, 6)).slice(0,180)};
   if (w === 'B') {
     S.recent = [S.B, ...S.recent.filter(r => hav(r, S.B) > 300)].slice(0, 5);
   }
   save(); renderResolved(w); renderChips(); drawInputs(true);
   $(w === 'B' ? '#bSugg' : '#cSugg').innerHTML = '';
-  if (RES) { // zadání se změnilo → staré výsledky pryč
-    RES = null; SEL = null; PROF = null;
-    if (resLayer) resLayer.clearLayers(); if (selLine && map) { map.removeLayer(selLine); selLine = null; }
-    $('#legend').hidden = true; $('#resBadge').hidden = true;
-    $('#resBody').className = 'empty'; $('#resBody').innerHTML = 'Zadání se změnilo — dej znovu <b>Najdi místo</b>.';
-    $('#profBody').className = 'empty'; $('#profBody').innerHTML = 'Vyber místo ve výsledcích nebo ťukni do mapy → Vyhodnotit.';
-  }
+  invalidateResults();
 }
 const shortName = r => {
   const parts = (r.display_name || '').split(',').map(x => x.trim());
@@ -625,15 +762,19 @@ const shortName = r => {
   const ctx = parts.find((x, i) => i > 0 && x !== nm && !/^\d/.test(x));
   return ctx ? `${nm}, ${ctx}` : nm;
 };
+const lookupSeq={B:0,C:0};
 async function resolveInput(w) {
+  if(running){toast('Dokonči nejprve výpočet.');return;}
   const inp = $(w === 'B' ? '#bIn' : '#cIn'), sug = $(w === 'B' ? '#bSugg' : '#cSugg');
-  const q = inp.value.trim(); if (!q) return;
+  const q = inp.value.trim(), seq=++lookupSeq[w]; if (!q) return;
   const p = parsePoint(q);
   if (p) { setPoint(w, {...p, name: p.name || q}); return; }
   sug.innerHTML = '<div class="muted">Hledám…</div>';
   try {
     const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=cs&q=${encodeURIComponent(q)}`);
     const js = await res.json();
+    if(running || seq!==lookupSeq[w] || inp.value.trim()!==q)return;
+    if (!Array.isArray(js))throw new Error('Neplatná odpověď geokódování');
     if (!js.length) { sug.innerHTML = '<div class="muted">Nic jsem nenašel. Zkus lokátor nebo souřadnice.</div>'; return; }
     if (js.length === 1) { setPoint(w, {lat: +js[0].lat, lon: +js[0].lon, name: shortName(js[0])}); inp.value = shortName(js[0]); return; }
     sug.innerHTML = js.map((r, i) => `<button class="sug" data-i="${i}">${esc(shortName(r))}<small>${esc(r.display_name)}</small></button>`).join('');
@@ -672,11 +813,13 @@ function showTab(t) {
 let map, ptLayer, resLayer, heatLayer, selLine, pickMode = null;
 const icon = (cls, txt) => L.divIcon({className: '', html: `<div class="mk ${cls}">${txt}</div>`, iconSize: [28, 28], iconAnchor: [14, 14]});
 function initMap() {
-  if (!window.L) { $('#map').innerHTML = '<div class="nomap">Mapa se nenačetla. Jsi offline, nebo planner běží v náhledu (třeba v Claude), který blokuje externí data — mapu, terén i GPS. Otevři ho z webu (GitHub Pages) nebo stažený soubor přímo v prohlížeči.</div>'; return; }
+  if (!window.L) { $('#map').innerHTML = '<div class="nomap">Mapová knihovna Leaflet se nenačetla. Výpočet může fungovat bez mapy, pokud je dostupný AWS terén. Pro mapu zkontroluj připojení a blokování CDN.</div>'; return; }
   map = L.map('map', {zoomControl: false}).setView([49.9, 15.4], 7);
-  const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {maxZoom: 17, subdomains: 'abc', attribution: '© <a href="https://openstreetmap.org/copyright">OSM</a>, SRTM · <a href="https://opentopomap.org">OpenTopoMap</a>'});
+  const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {maxZoom: 17, subdomains: 'abc', attribution: 'Map: © <a href="https://opentopomap.org">OpenTopoMap</a> (CC BY-SA), data © <a href="https://openstreetmap.org/copyright">OSM</a>'});
   const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '© <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>'});
-  topo.addTo(map);
+  topo.addTo(map); // Vrstevnice jsou výchozí; při opakovaných chybách použít automaticky OSM.
+  let topoErrors=0;
+  topo.on('tileerror',()=>{if(++topoErrors>=3&&map.hasLayer(topo)){map.removeLayer(topo);osm.addTo(map);toast('Turistická mapa není dostupná – přepnuto na OSM.',5000);}});
   L.control.layers({'Turistická': topo, 'OSM': osm}, null, {position: 'topleft'}).addTo(map);
   L.control.zoom({position: 'topright'}).addTo(map);
   ptLayer = L.layerGroup().addTo(map);
@@ -707,6 +850,7 @@ function startPick(w) {
 }
 function endPick() { pickMode = null; $('#pickBanner').hidden = true; }
 function onMapClick(ev) {
+  if(running||popupEvaluating){toast('Dokonči nejprve probíhající výpočet.');return;}
   const ll = {lat: ev.latlng.lat, lon: ev.latlng.lng};
   if (pickMode) {
     const w = pickMode; endPick();
@@ -719,7 +863,7 @@ function onMapClick(ev) {
     const P = params(), r = evalLink({...ll, h: P.me.h}, {...S.B, h: P.him.h}, P, 1500, false);
     if (r) {
       const b = budget(r.loss, P), c = cat(b.m);
-      html += `<br>${nf(demAt(ll.lat, ll.lon))} m n. m. · rezerva <b class="t-${c}">${sgn(b.m)} dB</b><br>azimut ${az3(r.az)}° · buzola ${az3((r.az - S.decl + 360) % 360)}°`;
+      html += `<br>${nf(demAt(ll.lat, ll.lon))} m n. m. · modelová rezerva <b class="t-${c}">${sgn(b.m)} dB</b><br>azimut ${az3(r.az)}° · buzola ${az3((r.az - S.decl + 360) % 360)}°`;
     }
   }
   html += `<div class="pop-act">${S.B ? '<button data-pop="eval">Vyhodnotit tento bod</button>' : ''}<button data-pop="C">Hledat kolem tohoto bodu</button><button data-pop="B">Sem dát protistanici</button></div></div>`;
@@ -729,9 +873,11 @@ function onMapClick(ev) {
   L.popup({maxWidth: 260, autoPanPadding: [16, 16]}).setLatLng(ev.latlng).setContent(box).openOn(map);
 }
 async function onPopupBtn(k, ll) {
+  if(running){toast('Dokonči nejprve výpočet.');return;}
   map.closePopup();
   if (k === 'B' || k === 'C') { setPoint(k, {...ll, name: llToLoc(ll.lat, ll.lon, 6)}); $(k === 'B' ? '#bIn' : '#cIn').value = llToLoc(ll.lat, ll.lon, 6); return; }
   if (k === 'eval') {
+    if(popupEvaluating)return;popupEvaluating=true;
     try {
       readForm();
       const pts = [ll, S.B]; if (S.C) pts.push(...circleBB(S.C, S.r));
@@ -739,6 +885,7 @@ async function onPopupBtn(k, ll) {
       const sp = evalSpot({lat: ll.lat, lon: ll.lon, name: 'Vlastní bod', kind: 'custom'}, params());
       selectSpot(sp, true); showTab('prof');
     } catch (err) { toast('Terén se nepodařilo stáhnout: ' + err.message, 5000); }
+    finally{popupEvaluating=false;}
   }
 }
 
@@ -749,9 +896,10 @@ async function fetchNamed(C, r) {
   const q = `[out:json][timeout:25];(node["natural"="peak"]${a};node["natural"="hill"]${a};node["tourism"="viewpoint"]${a};nwr["man_made"="tower"]["tower:type"="observation"]${a};);out center tags;`;
   for (const url of OVERPASS) {
     try {
-      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 20000);
-      const res = await fetch(url, {method: 'POST', body: 'data=' + encodeURIComponent(q), headers: {'Content-Type': 'application/x-www-form-urlencoded'}, signal: ctl.signal});
-      clearTimeout(tm);
+      const ctl = new AbortController(); const tm = setTimeout(() => ctl.abort(), 15000);
+      let res;
+      try{res=await fetch(url,{method:'POST',body:'data='+encodeURIComponent(q),headers:{'Content-Type':'application/x-www-form-urlencoded'},signal:ctl.signal});}
+      finally{clearTimeout(tm);}
       if (!res.ok) continue;
       const js = await res.json();
       return parseNamed(js.elements || []);
@@ -763,17 +911,19 @@ function parseNamed(els) {
   const raw = [];
   for (const el of els) {
     const lat = el.lat ?? el.center?.lat, lon = el.lon ?? el.center?.lon, t = el.tags || {};
-    if (lat == null) continue;
+    if (!Number.isFinite(lat) || !Number.isFinite(lon) || Math.abs(lat)>85 || Math.abs(lon)>180) continue;
     const kind = t.man_made === 'tower' ? 'tower' : (t.natural === 'peak' || t.natural === 'hill') ? 'peak' : 'view';
     raw.push({lat, lon, kind, name: t['name:cs'] || t.name || '', ele: parseFloat(String(t.ele || '').replace(',', '.')) || null,
       th: kind === 'tower' ? (parseFloat(t.height) || null) : null});
   }
-  // merge items closer than 150 m (vrchol + rozhledna + vyhlídka = jedno místo)
+  // Sloučit jen skutečné duplicity; rozhledna nesmí zdědit souřadnice sousedního vrcholu.
   const pri = {peak: 0, tower: 1, view: 2};
   raw.sort((a, b) => pri[a.kind] - pri[b.kind] || (b.name ? 1 : 0) - (a.name ? 1 : 0));
   const out = [];
   for (const p of raw) {
-    const m = out.find(o => hav(o, p) < 150);
+    // vrchol + vyhlídka do 150 m = jedno místo (počítá se ze země na souřadnicích vrcholu);
+    // rozhledna zůstává samostatně na svých souřadnicích
+    const m = out.find(o => (o.kind===p.kind && hav(o,p) < 25) || (o.kind!=='tower' && p.kind!=='tower' && hav(o,p) < 150));
     if (!m) { out.push({...p, tower: p.kind === 'tower', kinds: new Set([p.kind])}); continue; }
     m.kinds.add(p.kind);
     if (!m.name && p.name) m.name = p.name;
@@ -782,21 +932,18 @@ function parseNamed(els) {
   }
   return out;
 }
-const KIND_TXT = s => s.kind === 'grid' ? 'místo z mřížky' : s.kind === 'here' ? 'tvoje poloha' : s.kind === 'custom' ? 'vlastní bod'
+const KIND_TXT = s => s.kind === 'grid' ? 'místo z mřížky' : s.kind === 'here' ? 'střed hledané oblasti' : s.kind === 'custom' ? 'vlastní bod'
   : [s.kinds?.has('peak') && 'vrchol', s.tower && 'rozhledna', s.kinds?.has('view') && 'vyhlídka'].filter(Boolean).join(' · ');
 
 /* ---------- compute ---------- */
-let RES = null, SEL = null, running = false, spotSeq = 0;
+let RES = null, SEL = null, running = false, popupEvaluating=false, spotSeq = 0;
 function evalSpot(s, P) {
   const B = {...S.B, h: P.him.h};
-  const r = evalLink({lat: s.lat, lon: s.lon, h: P.me.h}, B, P, 1500, false);
+  const r = evalLink({lat: s.lat, lon: s.lon, h: P.me.h}, B, P, 3000, false);
   const sp = {...s, id: ++spotSeq, ground: demAt(s.lat, s.lon), r, b: r ? budget(r.loss, P) : null};
   if (S.C) { sp.dist = hav(S.C, s); sp.brgC = brg(S.C, s); }
-  if (s.tower && r) {
-    const plat = s.th ? Math.min(60, Math.max(4, s.th * 0.85)) : 12;
-    const r2 = evalLink({lat: s.lat, lon: s.lon, h: P.me.h + plat}, B, P, 1500, false);
-    if (r2) { sp.plat = plat; sp.r2 = r2; sp.b2 = budget(r2.loss, P); }
-  }
+  // Pozor: height OSM není doložená výška veřejně přístupné plošiny.
+  // Pro doporučení počítáme vždy z terénu, ne z fiktivní plošiny.
   sp.best = sp.b ? Math.max(sp.b.m, sp.b2 ? sp.b2.m : -1e9) : -1e9;
   sp.cat = cat(sp.best);
   return sp;
@@ -807,90 +954,105 @@ function setBusy(on, txt, p) {
   $('#runBar').style.width = on ? Math.round((p || 0) * 100) + '%' : '0';
 }
 async function run() {
-  if (running) return;
+  if(running)return;
+  if(popupEvaluating){toast('Probíhá vyhodnocení bodu v mapě.');return;}
+  // Zadání souřadnic musí být potvrzeno i bez stisku tlačítka Hledat.
+  for(const [w,id] of [['B','#bIn'],['C','#cIn']]) {
+    const entered=$(id).value.trim(),current=S[w];
+    const matches=current&&(entered===current.name||(current.name==='Moje poloha'&&entered.startsWith('Moje poloha')));
+    if(!entered){toast(w==='B'?'Vyplň protistanici.':'Vyplň oblast.');return;}
+    if(!matches){
+      const parsed=parsePoint(entered);
+      if(parsed)setPoint(w,{...parsed,name:parsed.name||entered});
+      else{toast('Nový text v poli '+(w==='B'?'protistanice':'oblast')+' zatím nebyl potvrzen. Použij Hledat.');return;}
+    }
+  }
   readForm();
-  if (!S.B) { toast('Zadej protistanici (lokátor, souřadnice nebo místo).'); return; }
-  if (!S.C) { toast('Zadej, kde hledáš (GPS, místo nebo ťukni do mapy).'); return; }
-  const Dbc = hav(S.B, S.C);
-  if (Dbc > 400000) { toast('Protistanice je přes 400 km — to už není plánování na přímou viditelnost.', 5000); return; }
-  running = true; $('#toast').hidden = true;
-  const P = params();
+  if(!S.B){toast('Zadej protistanici.');return;}
+  if(!S.C){toast('Zadej oblast (GPS, místo nebo výběr v mapě).');return;}
+  if(!RADII.includes(S.r)){toast('Neplatný poloměr hledání.');return;}
+  if(hav(S.B,S.C)>400000){toast('Protistanice je přes 400 km.',5000);return;}
+  const key=configKey();running=true;$('#toast').hidden=true;
+  const P=params();
   try {
-    setBusy(true, 'Stahuju terén…', 0.02);
-    const bb = bbOf([S.B, ...circleBB(S.C, S.r)]);
-    const namedP = fetchNamed(S.C, S.r);
-    await ensureDEM(bb, p => setBusy(true, 'Stahuju terén… ' + Math.round(p * 100) + ' %', p * 0.55));
-    setBusy(true, 'Počítám okolí…', 0.56);
-    const grid = await computeGrid(S.C, S.r, P, p => setBusy(true, 'Počítám okolí… ' + Math.round(p * 100) + ' %', 0.56 + p * 0.34));
-    setBusy(true, 'Kopce a rozhledny…', 0.92);
-    const named = await namedP;
-    const here = evalSpot({lat: S.C.lat, lon: S.C.lon, name: S.C.name || 'Tvoje poloha', kind: 'here'}, P);
-    const namedSp = (named || []).sort((a, b) => hav(S.C, a) - hav(S.C, b)).slice(0, 200).map(s => evalSpot(s, P));
-    // body z mřížky, které leží u pojmenovaného místa, nahradí to pojmenované
-    const gridSp = gridSpots(grid, P).filter(g => !namedSp.some(n => n.r && hav(n, g) < 450));
-    RES = {P, grid, here, named: namedSp, namedOk: !!named, gridSp, at: new Date()};
-    renderResults(); drawResultsOnMap(true);
-    showTab('res');
-    reverseNames();
-  } catch (e) {
-    console.error(e);
-    toast('Výpočet selhal: ' + (e.message || e) + '. Zkontroluj připojení.', 6000);
-  } finally { running = false; setBusy(false); }
+    setBusy(true,'Stahuju terén…',0.02);
+    const bb=bbOf([S.B,...circleBB(S.C,S.r)]);
+    const namedP=fetchNamed(S.C,S.r);
+    await ensureDEM(bb,p=>setBusy(true,'Stahuju terén… '+Math.round(p*100)+' %',p*0.48));
+    setBusy(true,'Počítám okolí…',0.5);
+    const grid=await computeGrid(S.C,S.r,P,p=>setBusy(true,'Počítám okolí… '+Math.round(p*100)+' %',0.5+p*0.37));
+    setBusy(true,'Ověřuji kandidáty…',0.87);
+    const gridSp=await gridSpots(grid,P);
+    const named=await namedP;
+    const here=evalSpot({lat:S.C.lat,lon:S.C.lon,name:S.C.name||'Tvoje poloha',kind:'here'},P);
+    const namedAll=(named||[]).filter(x=>hav(S.C,x)<=S.r+50).sort((a,b)=>hav(S.C,a)-hav(S.C,b));
+    const namedSp=[];
+    for(let i=0;i<namedAll.length;i++){namedSp.push(evalSpot(namedAll[i],P));if(i%40===39)await nextFrame();}
+    // Kandidáty neodstraňovat z optimalizační množiny! Duplicitní body skrýt jen v seznamu.
+    const gridDisplay=gridSp.filter(g=>{
+      const dupHere=here.r&&hav(g,here)<150&&here.best>=g.best;
+      const dupNamed=namedSp.some(n=>n.r&&hav(n,g)<450&&n.best>=g.best && n.dist<=g.dist+30);
+      return !(dupHere||dupNamed);
+    });
+    if(key!==configKey()){invalidateResults();toast('Zadání se během výpočtu změnilo, spusť výpočet znovu.');return;}
+    RES={P,grid,here,named:namedSp,namedOk:!!named,gridSp,gridDisplay,at:new Date(),key};
+    SHOW_ALL=false;SEL=null;PROF=null;
+    if(selLine&&map){map.removeLayer(selLine);selLine=null;}
+    renderResults();drawResultsOnMap(true);showTab('res');
+    // Neprovádíme automatický hromadný reverse geocoding veřejným Nominatim.
+  }catch(e){console.error(e);toast('Výpočet selhal: '+(e.message||e),6500);}
+  finally{running=false;setBusy(false);}
 }
+
 async function computeGrid(C, r, P, onProg) {
   const z = DEM.z, [cx, cy] = proj(C.lat, C.lon, z), rpx = r / mpp(C.lat);
   const G = r <= 3000 ? 32 : 44, step = rpx / G, N = 2 * G + 1;
-  const vals = new Float32Array(N * N).fill(NaN), B = {...S.B, h: P.him.h};
+  const vals = new Float32Array(N * N).fill(NaN), diffs=new Float32Array(N*N).fill(NaN), B={...S.B,h:P.him.h};
   let t0 = performance.now();
   for (let j = 0; j < N; j++) {
     for (let i = 0; i < N; i++) {
       const dx = (i - G) * step, dy = (j - G) * step;
       if (dx * dx + dy * dy > rpx * rpx) continue;
       const ll = unproj(cx + dx, cy + dy, z);
-      const res = evalLink({lat: ll.lat, lon: ll.lon, h: P.me.h}, B, P, 420, false);
-      if (res) vals[j * N + i] = budget(res.loss, P).m;
+      if(hav(C,ll)>r+1)continue;
+      const res = evalLink({lat: ll.lat, lon: ll.lon, h: P.me.h}, B, P, 3000, false);
+      if (res) {vals[j*N+i]=budget(res.loss,P).m;diffs[j*N+i]=res.diff;}
     }
     if (performance.now() - t0 > 40) { onProg(j / N); await nextFrame(); t0 = performance.now(); }
   }
   const nw = unproj(cx - (G + 0.5) * step, cy - (G + 0.5) * step, z), se = unproj(cx + (G + 0.5) * step, cy + (G + 0.5) * step, z);
-  return {N, G, step, cx, cy, z, vals, nw, se};
+  return {N,G,step,cx,cy,z,vals,diffs,nw,se};
 }
-function gridSpots(grid, P) {
-  const {N, G, step, cx, cy, z, vals} = grid, pts = [];
-  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
-    const m = vals[j * N + i]; if (isNaN(m)) continue;
-    pts.push({i, j, m, d: Math.hypot(i - G, j - G) * step});
+async function gridSpots(grid,P){
+  const {N,G,step,cx,cy,z,vals,diffs}=grid,pts=[];
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+    const m=vals[j*N+i];if(!Number.isFinite(m))continue;
+    const ll=unproj(cx+(i-G)*step,cy+(j-G)*step,z);
+    pts.push({i,j,ll,m,diff:diffs[j*N+i],d:hav(S.C,ll)});
   }
-  if (!pts.length) return [];
-  const at = (i, j) => (i >= 0 && j >= 0 && i < N && j < N) ? vals[j * N + i] : NaN;
-  const refine = p => { // nejlepší buňka v okolí ±2
-    let b = p;
-    for (let dj = -2; dj <= 2; dj++) for (let di = -2; di <= 2; di++) {
-      const m = at(p.i + di, p.j + dj); if (!isNaN(m) && m > b.m) b = {i: p.i + di, j: p.j + dj, m};
-    }
-    return b;
+  if(!pts.length)return [];
+  const byNear=[...pts].sort((a,b)=>a.d-b.d),byPower=[...pts].sort((a,b)=>b.m-a.m);
+  const picked=[],byIndex=new Map();
+  const add=p=>{
+    if(!p)return null;
+    const key=p.j*N+p.i;
+    if(byIndex.has(key))return byIndex.get(key);
+    const s=evalSpot({...p.ll,name:'',kind:'grid'},P);
+    s.gridIndex=key;picked.push(s);byIndex.set(key,s);return s;
   };
-  const picks = [];
-  const add = (p, tag) => {
-    const ll = unproj(cx + (p.i - G) * step, cy + (p.j - G) * step, z);
-    if (picks.some(q => hav(q, ll) < 400)) { const q = picks.find(q => hav(q, ll) < 400); q.tags.push(tag); return; }
-    picks.push({...ll, tags: [tag]});
-  };
-  const sure = pts.filter(p => p.m >= 20).sort((a, b) => a.d - b.d)[0];
-  if (sure) add(refine(sure), 'near');
-  else { const good = pts.filter(p => p.m >= 10).sort((a, b) => a.d - b.d)[0]; if (good) add(refine(good), 'near'); }
-  const sorted = [...pts].sort((a, b) => b.m - a.m);
-  add(sorted[0], 'best');
-  const top = [];
-  for (const p of sorted) {
-    if (top.length >= 4) break;
-    if (top.every(q => Math.hypot(q.i - p.i, q.j - p.j) > Math.max(G / 4, 3))) top.push(p);
+  // Všechny body gridu již mají plný profil (nMax=3000). Žádný nevyřazovat heuristikou -4 dB.
+  for(const [threshold,robust] of [[20,true],[20,false],[10,false],[0,false]]){
+    const p=byNear.find(q=>q.m>=threshold&&(!robust||q.diff<15));
+    if(p){const s=add(p);s.tags=[...(s.tags||[]),robust?'nearest-robust':'nearest-'+threshold];}
   }
-  top.forEach(p => add(p, 'top'));
-  return picks.map(p => {
-    const sp = evalSpot({lat: p.lat, lon: p.lon, name: '', kind: 'grid'}, P);
-    sp.tags = p.tags; return sp;
-  });
+  add(byPower[0]);
+  const top=[];
+  for(const p of byPower){
+    if(top.length>=5)break;
+    if(top.every(q=>Math.hypot(p.i-q.i,p.j-q.j)>Math.max(G/4,3)))top.push(p);
+  }
+  top.forEach(add);
+  return picked;
 }
 
 /* ---------- results ---------- */
@@ -918,10 +1080,11 @@ function navLinks(s) {
 function spotCard(s, idx) {
   if (!s.r) return '';
   const useTower = s.b2 && s.b2.m > s.b.m, b = useTower ? s.b2 : s.b, r = useTower ? s.r2 : s.r, c = cat(b.m);
-  const where = s.kind === 'here' ? '' : (s.dist != null ? `${nf(s.dist / 1000, 1)} km ${dir8(s.brgC)} od tebe · ` : '');
+  const where = s.kind === 'here' ? '' : (s.dist != null ? `${nf(s.dist / 1000, 1)} km ${dir8(s.brgC)} od středu oblasti · ` : '');
   const ele = s.ele ? nf(s.ele) : nf(s.ground);
-  const fres = r.los ? (r.clr >= 0.6 ? 'čistá viditelnost' : `viditelnost, Fresnel volný z ${nf(Math.max(0, r.clr) * 100)} %`) : `za překážkou (difrakce ${nf(r.diff)} dB)`;
-  const towerLine = s.b2 ? `<div class="sp-meta">Z plošiny rozhledny (~${nf(s.plat)} m): <b class="t-${cat(s.b2.m)}">${sgn(s.b2.m)} dB</b> · ze země: <b class="t-${cat(s.b.m)}">${sgn(s.b.m)} dB</b></div>` : '';
+  const fres = r.short?'krátká trasa: pouze FSPL, lokální terén a blízké pole nehodnoceny':r.los?(r.clr>=0.6?'Fresnel ≥ 60 %':`Fresnel volný z ${nf(Math.max(0,r.clr)*100)} %`):`zastíněná trasa (Delta-Bullington ${nf(r.diff)} dB)`;
+  const warn = r.uncertain?' · <b class="t-edge">Pozor: blízká překážka, nejistota DEM</b>':'';
+  const towerLine = s.b2 ? `<div class="sp-meta">Hypoteticky z plošiny rozhledny (~${nf(s.plat)} m): <b class="t-${cat(s.b2.m)}">${sgn(s.b2.m)} dB</b> · ze země: <b class="t-${cat(s.b.m)}">${sgn(s.b.m)} dB</b></div>` : '';
   return `<div class="card spot" data-id="${s.id}">
     <div class="sp-head">
       <span class="rank bg-${c}">${idx ?? '•'}</span>
@@ -929,7 +1092,7 @@ function spotCard(s, idx) {
       <span class="pill bg-${c}">${sgn(b.m)} dB</span>
     </div>
     ${aimBlock(s)}
-    <div class="sp-meta">${CAT_TXT[c]} · ${fres} · náměr ${sgn(r.elev, 1)}° · u protistanice ${sUnits(b.rxHim)} · ${llToLoc(s.lat, s.lon, 6)}</div>
+    <div class="sp-meta">${CAT_TXT[c]} · ${fres} · náměr ${sgn(r.elev, 1)}° · teoretické S u protistanice ${sUnits(b.rxHim)} · ${llToLoc(s.lat, s.lon, 6)}${warn}</div>
     ${towerLine}
     <div class="sp-act"><button data-prof="${s.id}">Profil</button>${s.kind === 'here' ? '' : navLinks(s)}</div>
   </div>`;
@@ -939,25 +1102,28 @@ function allSpots() { return RES ? [RES.here, ...RES.gridSp, ...RES.named] : [];
 function renderResults() {
   const R = RES, P = R.P, el = $('#resBody'); el.className = '';
   const named = [...R.named].filter(s => s.r).sort((a, b) => CAT_RANK[a.cat] - CAT_RANK[b.cat] || a.dist - b.dist);
-  const gridSp = R.gridSp.filter(s => s.r);
+  const gridSp = R.gridSp.filter(s => s.r), gridDisplay=R.gridDisplay.filter(s=>s.r);
   // doporučení
   let reco = null, recoTxt = '';
   // přednost mají místa s (téměř) přímou viditelností — predikce přes velké překážky je méně spolehlivá
   const lnk = s => s.b2 && s.b2.m > s.b.m ? s.r2 : s.r;
   const robust = s => lnk(s).diff < 15;
-  const nearSure = (list, th, rob) => list.filter(s => Math.round(s.best) >= th && (!rob || robust(s))).sort((a, b) => a.dist - b.dist)[0];
+  const nearSure = (list, th, rob) => list.filter(s => s.best >= th && (!rob || robust(s))).sort((a,b)=>a.dist-b.dist)[0];
   const here = R.here.r ? [R.here] : [];
-  const passes = [[20, true, 'Nejbližší místo s jistým spojením'], [20, false, 'Nejbližší jisté místo (přes překážku)'],
-    [10, false, 'Jisté místo v okruhu není — nejbližší, kde by to mělo jít'], [0, false, 'Jen na hraně — nejbližší použitelné místo']];
+  // Priorita: zbytečně necestovat, pokud zde již existuje dostatečná modelová rezerva.
+  // Difrakci používáme jako upozornění, nikoliv absolutní veto.
+  const passes=[[20,false,'Nejbližší nalezený bod s vysokou modelovou rezervou'],
+    [10,false,'Nejbližší nalezený bod s dobrou modelovou rezervou'],
+    [0,false,'Nejbližší nalezený bod s nízkou modelovou rezervou']];
   for (const [th, rob, txt] of passes) {
     const n = nearSure([...here, ...named], th, rob), g = nearSure(gridSp, th, rob);
-    reco = n && (!g || n.dist <= g.dist * 1.6 + 800) ? n : g;
-    if (reco) { recoTxt = reco.kind === 'here' ? (rob ? 'Odsud to půjde — nikam nemusíš' : 'Odsud by to mělo jít (přes překážku)') : txt; break; }
+    reco = !g ? n : !n ? g : n.dist <= g.dist ? n : g;
+    if(reco){recoTxt=reco.kind==='here'?'Střed oblasti již splňuje modelový práh':txt;break;}
   }
   // nejsilnější alternativa: z míst do 3 dB od maxima to nejbližší
   const pool = [...named, ...gridSp];
   const maxB = Math.max(...pool.map(s => s.best), -1e9);
-  const strongest = pool.filter(s => s.best >= maxB - 3).sort((a, b) => a.dist - b.dist)[0];
+  const strongest = pool.filter(s => s.best >= maxB - 0.25).sort((a, b) => a.dist - b.dist)[0];
   const alt = reco && strongest && strongest !== reco && strongest.best >= reco.best + 8 ? strongest : null;
   const B = S.B, Dbc = hav(S.C, B);
   let h = `<div class="card sum">
@@ -965,20 +1131,21 @@ function renderResults() {
     ${nf(P.him.p, P.him.p < 1 ? 1 : 0)} W · ${sgn(P.him.g)} dBi · ${nf(P.him.h)} m nad zemí &nbsp;|&nbsp; ty: ${nf(P.me.p, P.me.p < 1 ? 1 : 0)} W · ${sgn(P.me.g)} dBi · ${S.mode}<br>
     Okruh <b>${S.r / 1000} km</b> · střed: ${esc(S.C.name)} · k protistanici ${nf(Dbc / 1000)} km, směr ${az3(brg(S.C, B))}°
   </div>`;
+  R.reco=reco;
   if (reco) {
     const r = reco.b2 && reco.b2.m > reco.b.m ? reco.r2 : reco.r, b = reco.b2 && reco.b2.m > reco.b.m ? reco.b2 : reco.b;
     const target = reco.kind === 'here' ? '' : `Jeď na: <span data-name="${reco.id}">${spotTitle(reco)}</span>`;
     h += `<div class="card reco spot" data-id="${reco.id}">
       <div class="ct">➜ ${esc(recoTxt)}</div>
       <div class="reco-main">${target}${target ? '<br>' : ''}miř ${az3(r.az)}° <span style="color:var(--muted);font-weight:600">(buzola ${az3((r.az - S.decl + 360) % 360)}°)</span></div>
-      <div class="reco-sub">${reco.kind === 'here' ? '' : nf(reco.dist / 1000, 1) + ' km ' + dir8(reco.brgC) + ' od tebe · '}rezerva <b class="t-${cat(b.m)}">${sgn(b.m)} dB</b> · ${nf(r.D / 1000)} km k protistanici</div>
+      <div class="reco-sub">${reco.kind === 'here' ? '' : nf(reco.dist / 1000, 1) + ' km ' + dir8(reco.brgC) + ' od středu oblasti · '}modelová rezerva <b class="t-${cat(b.m)}">${sgn(b.m)} dB</b> · ${nf(r.D / 1000)} km k protistanici${r.diff>=15?' · <b>velká difrakce: vyšší nejistota</b>':''}</div>
       ${alt ? `<div class="reco-sub">Nejsilnější v okruhu: <b data-name="${alt.id}">${spotTitle(alt)}</b> — ${nf(alt.dist / 1000, 1)} km ${dir8(alt.brgC)}, <b class="t-${cat(alt.best)}">${sgn(alt.best)} dB</b> <a href="#" data-sel="${alt.id}">ukázat</a></div>` : ''}
       <div class="sp-act"><button data-prof="${reco.id}">Profil</button>${reco.kind === 'here' ? '' : navLinks(reco)}</div>
     </div>`;
   } else {
-    h += `<div class="card reco"><div class="ct">✕ V okruhu nic nevychází</div><div class="reco-sub">Zvětši okruh, přidej výkon nebo zisk (protistanice se směrovkou?), případně zvaž jinou protistanici. Podívej se na profil své polohy, kde je překážka.</div></div>`;
+    h += `<div class="card reco"><div class="ct">✕ Žádný nalezený bod nedosahuje modelového prahu</div><div class="reco-sub">Zvětši okruh, přidej výkon nebo zisk (protistanice se směrovkou?), případně zvaž jinou protistanici. Podívej se na profil své polohy, kde je překážka.</div></div>`;
   }
-  h += `<h3 class="sec">Tady, kde jsi</h3>` + spotCard(R.here);
+  h += `<h3 class="sec">Střed hledané oblasti</h3>` + spotCard(R.here);
   const showN = SHOW_ALL ? named.length : 8;
   h += `<h3 class="sec">Kopce, rozhledny a vyhlídky v okruhu</h3>`;
   if (!R.namedOk) h += `<div class="card muted">Seznam kopců z OpenStreetMap se nepodařilo stáhnout. Níž jsou aspoň nejlepší body z terénu.</div>`;
@@ -986,10 +1153,10 @@ function renderResults() {
   h += named.slice(0, showN).map((s, i) => spotCard(s, i + 1)).join('');
   if (named.length > showN) h += `<button class="more" id="moreBtn">Zobrazit dalších ${named.length - showN}</button>`;
   h += `<h3 class="sec">Nejlepší body podle terénu</h3>`;
-  h += gridSp.map((s, i) => spotCard(s, String.fromCharCode(65 + i))).join('');
-  h += `<p class="note">Spočítáno ${R.at.toLocaleTimeString('cs-CZ', {hour: '2-digit', minute: '2-digit'})} · terén ~${nf(mpp(S.C.lat))} m/px · ${nf(R.grid.step * mpp(S.C.lat))} m mřížka. Lesy a budovy nejsou v modelu — v lese si odečti 5–15 dB.</p>`;
+  h += gridDisplay.map((s, i) => spotCard(s, String.fromCharCode(65 + i))).join('');
+  h += `<p class="note">Spočítáno ${R.at.toLocaleTimeString('cs-CZ', {hour: '2-digit', minute: '2-digit'})} · terén ~${nf(mpp(S.C.lat))} m/px · ${nf(R.grid.step * mpp(S.C.lat))} m mřížka. Nezapočítány lesy, budovy, fading a rušení. Předpověď není záruka QSO. Nejbližší = z vyhodnocených buněk mřížky a OSM bodů vzdušnou čarou; mezi buňkami může existovat lepší místo. Přístupnost neověřena.</p>`;
   el.innerHTML = h;
-  $('#resBadge').textContent = named.filter(s => s.cat === 'ok').length + gridSp.filter(s => s.cat === 'ok').length || '';
+  $('#resBadge').textContent = named.filter(s => s.cat === 'ok').length + gridDisplay.filter(s => s.cat === 'ok').length || '';
   $('#resBadge').hidden = !$('#resBadge').textContent;
   $('#moreBtn')?.addEventListener('click', () => { SHOW_ALL = true; renderResults(); drawResultsOnMap(false); });
   el.querySelectorAll('[data-prof]').forEach(b => b.addEventListener('click', ev => {
@@ -1005,18 +1172,6 @@ function renderResults() {
     if (ev.target.closest('a,button')) return;
     const s = allSpots().find(x => x.id === +c.dataset.id); if (s) selectSpot(s, true);
   }));
-}
-async function reverseNames() {
-  for (const s of (RES?.gridSp || []).slice(0, 5)) {
-    if (s.name || s.place) continue;
-    try {
-      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=14&accept-language=cs&lat=${s.lat}&lon=${s.lon}`);
-      const js = await r.json(), a = js.address || {};
-      s.place = a.village || a.hamlet || a.town || a.suburb || a.city || a.municipality || '';
-      if (s.place) $$(`[data-name="${s.id}"]`).forEach(e => e.textContent = 'Místo u ' + s.place);
-    } catch (e) { return; }
-    await new Promise(r => setTimeout(r, 1100));
-  }
 }
 function heatURL(grid) {
   const {N, vals} = grid, cv = document.createElement('canvas'); cv.width = N; cv.height = N;
@@ -1039,7 +1194,9 @@ function drawResultsOnMap(fit) {
   $('#legend').hidden = false;
   const named = [...RES.named].filter(s => s.r).sort((a, b) => CAT_RANK[a.cat] - CAT_RANK[b.cat] || a.dist - b.dist);
   named.slice(0, SHOW_ALL ? named.length : 8).forEach((s, i) => addSpotMarker(s, i + 1));
-  RES.gridSp.filter(s => s.r).forEach((s, i) => addSpotMarker(s, String.fromCharCode(65 + i)));
+  RES.gridDisplay.filter(s => s.r).forEach((s, i) => addSpotMarker(s, String.fromCharCode(65 + i)));
+  // Doporučení vždy ukázat i když se jeho běžná kartička skryla jako duplicita.
+  if(RES.reco && RES.reco.kind!=='here' && !spotMarkers.has(RES.reco.id)) addSpotMarker(RES.reco,'★');
   if (fit) {
     const cb = circleBB(S.C, S.r);
     map.fitBounds([[cb[0].lat, cb[0].lon], [cb[1].lat, cb[1].lon]], {padding: [10, 10]});
@@ -1080,18 +1237,18 @@ function renderProfilePanel() {
     <div class="readout" id="readout">Táhni prstem po profilu pro detail.</div>
     <div class="kv">
       <div><div class="k">Volný prostor</div><div class="v">${nf(r.fspl, 1)} dB</div></div>
-      <div><div class="k">Difrakce (Deygout, ${r.edges.length} ${r.edges.length === 1 ? 'hrana' : r.edges.length ? 'hrany' : 'hran'})</div><div class="v">${nf(r.diff, 1)} dB</div></div>
+      <div><div class="k">Difrakce (Delta-Bullington)</div><div class="v">${nf(r.diff, 1)} dB</div></div>
       <div><div class="k">Celkový útlum</div><div class="v">${nf(r.loss + P.other, 1)} dB</div></div>
       <div><div class="k">Náměr</div><div class="v">${sgn(r.elev, 2)}°</div></div>
-      <div><div class="k">U protistanice (tvůj TX)</div><div class="v">${nf(b.rxHim)} dBm · ${sUnits(b.rxHim)}</div></div>
-      <div><div class="k">U tebe (jeho TX)</div><div class="v">${nf(b.rxMe)} dBm · ${sUnits(b.rxMe)}</div></div>
+      <div><div class="k">Teoretický RX u protistanice</div><div class="v">${nf(b.rxHim)} dBm · ${sUnits(b.rxHim)}</div></div>
+      <div><div class="k">Teoretický RX u tebe</div><div class="v">${nf(b.rxMe)} dBm · ${sUnits(b.rxMe)}</div></div>
       <div><div class="k">Rezerva tam / zpět</div><div class="v"><span class="t-${cat(b.up)}">${sgn(b.up)}</span> / <span class="t-${cat(b.down)}">${sgn(b.down)}</span> dB</div></div>
-      <div><div class="k">Fresnelova zóna</div><div class="v">${r.los ? (r.clr >= 1 ? 'zcela volná' : 'volná z ' + nf(Math.max(0, r.clr) * 100) + ' %') : 'zakrytá'}</div></div>
+      <div><div class="k">Fresnelova zóna</div><div class="v">${r.short?'nevyhodnoceno':r.los ? (r.clr >= 1 ? 'zcela volná' : 'volná z ' + nf(Math.max(0, r.clr) * 100) + ' %') : 'zakrytá'}</div></div>
       <div><div class="k">Výška tvé antény</div><div class="v">${nf(r.gA)} + ${nf(h, 1)} m</div></div>
       <div><div class="k">Výška protistanice</div><div class="v">${nf(r.gB)} + ${nf(P.him.h, 1)} m</div></div>
     </div>
     <div class="sp-act">${s.kind === 'here' ? '' : navLinks(s)}</div>
-    <p class="note">Terén je vykreslen včetně zakřivení Země (k = ${nf(S.k, 2)}). Světlý pás = 1. Fresnelova zóna, červené značky = hrany, které berou signál.</p>
+    <p class="note">Terén je vykreslen včetně zakřivení Země (k = ${nf(S.k, 2)}). Světlý pás = 1. Fresnelova zóna. Červené značky = dominantní překážky podle pomocného knife-edge testu (nesčítají se do Delta-Bullington).</p>
   </div>`;
   requestAnimationFrame(drawProfile);
   const cv = $('#profCv');
@@ -1148,34 +1305,35 @@ function drawProfile() {
   const placed = [];
   for (const [i, loss] of [...r.edges].sort((a, b) => b[1] - a[1])) {
     g.fillStyle = '#dc2626'; g.beginPath(); g.arc(X(i), Y(e[i]), 4.5, 0, 7); g.fill();
-    if (loss < 1) continue;
+    if(loss<1||placed.length)continue; // popisek jen u hlavní překážky
     const lx = Math.min(Math.max(X(i) - 18, pl + 2), W - 52);
     let ly = Math.max(Y(e[i]) - 9, 12);
     while (placed.some(p => Math.abs(p[0] - lx) < 48 && Math.abs(p[1] - ly) < 13)) ly -= 13;
     placed.push([lx, ly]);
-    g.fillText('−' + nf(loss, 0) + ' dB', lx, Math.max(ly, 11));
+    g.fillText('překážka', lx, Math.max(ly,11)); // číslo knife-edge se do Delta-Bullington nesčítá → nezobrazovat jako dB
   }
   // cursor
   if (PROF.cursor != null) {
     const i = Math.round(PROF.cursor * (n - 1)), x = X(i);
     g.strokeStyle = css('--ink'); g.lineWidth = 1; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(x, pt); g.lineTo(x, H - pb); g.stroke(); g.setLineDash([]);
     const clr = line(i) - e[i], fz = f1(i);
-    $('#readout').innerHTML = `${nf(i * r.dx / 1000, 1)} km · terén ${nf(r.g[i])} m n. m. · paprsek ${clr >= 0 ? 'nad terénem' : 'pod terénem'} ${nf(Math.abs(clr))} m (${nf(clr / fz * 100)} % F1)`;
+    $('#readout').innerHTML = `${nf(i * r.dx / 1000, 1)} km · terén ${nf(r.g[i])} m n. m. · paprsek ${clr >= 0 ? 'nad terénem' : 'pod terénem'} ${nf(Math.abs(clr))} m (${fz > 0.01 ? nf(clr / fz * 100) + ' % F1' : 'F1 na konci = 0'})`;
   }
 }
 
 /* ---------- share ---------- */
-async function share() {
-  if (!S.B) { toast('Nejdřív zadej protistanici.'); return; }
-  const h = new URLSearchParams();
-  h.set('b', S.B.lat.toFixed(5) + ',' + S.B.lon.toFixed(5)); h.set('bn', S.B.name);
-  if (S.C && S.C.name !== 'Moje poloha') { h.set('c', S.C.lat.toFixed(5) + ',' + S.C.lon.toFixed(5)); h.set('cn', S.C.name); }
-  h.set('r', S.r); h.set('hp', S.him.p); h.set('hg', S.him.g); h.set('hh', S.him.h); h.set('m', S.mode);
-  const url = location.href.split('#')[0] + '#' + h.toString();
-  try {
-    if (navigator.share) { await navigator.share({title: '2m plán', text: '2m spojení → ' + S.B.name, url}); return; }
-    await navigator.clipboard.writeText(url); toast('Odkaz na plán je ve schránce.');
-  } catch (e) { if (e.name !== 'AbortError') toast(url, 8000); }
+async function share(){
+  readForm();
+  if(!S.B){toast('Nejdřív zadej protistanici.');return;}
+  const h=new URLSearchParams();
+  h.set('v','2');h.set('b',S.B.lat.toFixed(6)+','+S.B.lon.toFixed(6));h.set('bn',S.B.name||'Protistanice');
+  if(S.C&&S.C.name!=='Moje poloha'){h.set('c',S.C.lat.toFixed(6)+','+S.C.lon.toFixed(6));h.set('cn',S.C.name||'Oblast');}
+  for(const [k,v] of [['r',S.r],['hp',S.him.p],['hg',S.him.g],['hh',S.him.h],['mp',S.me.p],['mg',S.me.g],['mh',S.me.h],['m',S.mode],['f',S.f],['k',S.k],['o',S.other],['de',S.decl]])h.set(k,v);
+  const url=location.href.split('#')[0]+'#'+h.toString();
+  try{
+    if(navigator.share){await navigator.share({title:'2m Planner · plán',text:'2m spojení → '+S.B.name,url});return;}
+    await navigator.clipboard.writeText(url);toast('Kompletní plán je ve schránce.');
+  }catch(e){if(e.name!=='AbortError')toast(url,8000);}
 }
 
 /* ---------- wiring ---------- */
@@ -1184,7 +1342,10 @@ function bind() {
   $$('[data-search]').forEach(b => b.onclick = () => resolveInput(b.dataset.search));
   $$('[data-pick]').forEach(b => b.onclick = () => startPick(b.dataset.pick));
   $('#pickCancel').onclick = endPick;
-  ['#bIn', '#cIn'].forEach((id, k) => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); resolveInput(k ? 'C' : 'B'); } }));
+  ['#bIn', '#cIn'].forEach((id, k) => {
+    $(id).addEventListener('input',()=>{if(RES)invalidateResults();});
+    $(id).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); resolveInput(k ? 'C' : 'B'); } });
+  });
   $('#gpsBtn').onclick = gps;
   $('#runBtn').onclick = run;
   $('#shareBtn').onclick = share;
@@ -1196,8 +1357,10 @@ function bind() {
   $('#hisAnt').onchange = e => { const a = ANT_HIM.find(x => x[0] === e.target.value); S.him.ant = a[0]; if (a[2] != null) $('#hisG').value = a[2]; readForm(); };
   $('#meAnt').onchange = e => { const a = ANT_ME.find(x => x[0] === e.target.value); S.me.ant = a[0]; if (a[2] != null) $('#meG').value = a[2]; readForm(); };
   ['#hisG', '#meG'].forEach(id => $(id).addEventListener('input', () => { const sel = id === '#hisG' ? '#hisAnt' : '#meAnt'; $(sel).value = 'custom'; (id === '#hisG' ? S.him : S.me).ant = 'custom'; readForm(); }));
-  $$('#tab-in input, #tab-in select').forEach(i => i.addEventListener('change', readForm));
-  $$('#modeSeg button').forEach(b => b.onclick = () => { S.mode = b.dataset.mode; save(); writeForm(); });
+  $$('#tab-in input[type=number], #tab-in select').forEach(i=>{
+    i.addEventListener('input',readForm);i.addEventListener('change',readForm);
+  });
+  $$('#modeSeg button').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode; if(RES&&RES.key!==configKey())invalidateResults();save();writeForm();});
   $('#heatTgl').onchange = e => { if (!heatLayer) return; e.target.checked ? heatLayer.addTo(resLayer) : resLayer.removeLayer(heatLayer); };
   const setHdr = () => document.documentElement.style.setProperty('--hdr', $('#top').offsetHeight + 'px');
   setHdr(); window.addEventListener('resize', () => { setHdr(); if (SEL) drawProfile(); map && map.invalidateSize(); });
