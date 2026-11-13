@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="2m Planner">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="Plánovač 2m spojení pro ruční stanici: kam jet, kam mířit, jaká bude rezerva.">
-<title>2m Planner v2.2 · OK1JDV</title>
+<title>2m Planner v2.3.1 · OK1JDV</title>
 <script>
   (function(){try{var t=localStorage.getItem('pl2m-theme');}catch(e){}
   document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');})();
@@ -147,6 +147,18 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
 .sp-act .go{background:var(--ink);color:var(--card);border-color:var(--ink)}
 .more{width:100%;height:42px;border-radius:10px;border:1px dashed var(--line);background:transparent;color:var(--muted);font-weight:600}
 
+.mode-compare{margin-top:12px;padding:11px;background:var(--soft);border-radius:10px;font-size:13px}
+.mode-compare table{width:100%;border-collapse:collapse;margin:8px 0}
+.mode-compare td{padding:6px 3px;border-bottom:1px solid var(--line)}
+.mode-compare td:last-child{font-variant-numeric:tabular-nums}
+.rf-alert{border:1px solid var(--edge);border-left:5px solid var(--edge);border-radius:10px;padding:10px 12px;margin:10px 0;color:var(--ink);background:var(--card);font-size:13px}
+.rf-alert strong{color:var(--bad)}
+.rf-hint{color:var(--muted);font-size:12px;margin-top:6px}
+.qso-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.qso-grid input{width:100%}
+.mode-compare th{text-align:right;color:var(--muted);font-size:11px;padding:4px 3px}
+.mode-compare th:first-child{text-align:left}
+.mode-compare td:not(:first-child){text-align:right;white-space:nowrap}
 /* profile */
 .prof-cv{width:100%;height:250px;display:block;touch-action:pan-y}
 .readout{font-size:12.5px;color:var(--muted);min-height:18px;margin-top:6px}
@@ -184,7 +196,7 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
   <header class="top" id="top">
     <div class="brand">
       <span class="logo">2M</span>
-      <div><b>2m Planner <small>v2.2</small></b><small>stanoviště · azimut · modelová rezerva</small></div>
+      <div><b>2m Planner <small>v2.3.1</small></b><small>stanoviště · azimut · modelová rezerva</small></div>
     </div>
     <div class="hdr-act">
       <button class="icon" id="shareBtn" title="Sdílet plán odkazem" aria-label="Sdílet plán">⤴</button>
@@ -227,6 +239,11 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
           <label>Anténa<select id="hisAnt"></select></label>
           <label>Zisk<span><input id="hisG" type="number" step="0.5" inputmode="decimal"> dBi</span></label>
         </div>
+        <div class="grid2" style="grid-template-columns:1fr">
+          <label>Polarizace protistanice<select id="himPol" aria-label="Polarizace antény protistanice">
+            <option value="auto">Automaticky podle módu</option><option value="H">Horizontální (H)</option><option value="V">Vertikální (V)</option><option value="?">Neznámá</option>
+          </select></label>
+        </div>
         <div class="grid3" style="grid-template-columns:1fr 1fr">
           <label>Výkon<span><input id="hisP" type="number" step="0.5" min="0.1" inputmode="decimal"> W</span></label>
           <label>Anténa nad zemí<span><input id="hisH" type="number" step="1" min="0" inputmode="decimal"> m</span></label>
@@ -250,12 +267,22 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
           <label>Zisk<span><input id="meG" type="number" step="0.5" inputmode="decimal"> dBi</span></label>
         </div>
         <div class="grid3">
-          <label>Výkon ID-52E<select id="meP" style="margin-top:4px">
-            <option value="5">5 W</option><option value="2.5">2,5 W</option><option value="1">1 W</option><option value="0.5">0,5 W</option><option value="0.1">0,1 W</option>
+          <label>Výkon <span id="rigLabel">ID-52E</span><select id="meP" style="margin-top:4px">
+            <option value="10">10 W · IC-705 / 13,8 V</option><option value="5">5 W</option><option value="2.5">2,5 W</option><option value="1">1 W</option><option value="0.5">0,5 W</option><option value="0.1">0,1 W</option>
           </select></label>
           <label>Anténa nad zemí<span><input id="meH" type="number" step="0.5" min="0" inputmode="decimal"> m</span></label>
-          <label>Mód<div class="seg" id="modeSeg"><button data-mode="FM">FM</button><button data-mode="DV">DV</button></div></label>
+          <label>Mód<div class="seg" id="modeSeg"><button data-mode="FM">FM</button><button data-mode="DV">DV</button><button data-mode="CW">CW</button></div></label>
         </div>
+        <div class="grid2" style="grid-template-columns:1fr 1fr">
+          <label>Polarizace moje<select id="mePol" aria-label="Polarizace vlastní antény">
+            <option value="auto">Auto dle módu</option><option value="H">Horizontální (H)</option><option value="V">Vertikální (V)</option><option value="?">Neznámá</option>
+          </select></label>
+          <label id="cwSupplyRow" hidden>Napájení IC-705<select id="cwSupply">
+            <option value="battery">Baterie · max 5 W</option><option value="external">Externí 13,8 V · max 10 W</option>
+          </select></label>
+        </div>
+        <p class="note" id="rigInfo">FM/DV: ID-52E; CW: IC-705.</p>
+        <div class="rf-alert" id="polNotice" hidden></div>
       </div>
 
       <div class="card">
@@ -268,10 +295,23 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
           </div>
           <div class="grid3">
             <label>Pevné ztráty<span><input id="lossIn" type="number" step="0.5" inputmode="decimal"> dB</span></label>
-            <label>Citlivost<span><input id="sensIn" type="number" step="1" inputmode="decimal" readonly> dBm</span></label>
-            <label>&nbsp;<span class="muted" style="font-size:12px">kabel + odhad těla/polarizace; bez lesa a fadingu</span></label>
+            <label>RX citlivost moje<span><input id="meSensIn" type="number" step="0.1" inputmode="decimal" min="-150" max="-80"> dBm</span></label>
+            <label>RX protistanice<span><input id="himSensIn" type="number" step="0.1" inputmode="decimal" min="-150" max="-80"> dBm</span></label>
           </div>
-          <p class="note">Citlivost podle módu: FM 0,18 µV (12 dB SINAD) ≈ −122 dBm, DV 0,2 µV (1 % BER) ≈ −121 dBm. Deklinace v ČR je kolem +5° (východní) — magnetický azimut = zeměpisný − deklinace.</p>
+          <div class="grid2" style="align-items:end">
+            <label id="cwCtrl" hidden>CW filtr (oba přijímače)<select id="cwBw"><option value="500">500 Hz · dle specifikace</option><option value="250">250 Hz · modelový odhad</option><option value="100">100 Hz · modelový odhad</option></select></label>
+            <button class="btn" id="sensReset" type="button" style="width:100%">Výchozí citlivost</button>
+          </div>
+          <div class="lbl">Provozní práh pro čitelné QSO · přídavná rezerva nad laboratorní citlivost</div>
+          <div class="grid3 qso-grid">
+            <label>FM +dB<span><input id="qsoFM" type="number" min="0" max="40" step="0.5" inputmode="decimal" placeholder="nezměřeno"> dB</span></label>
+            <label>DV +dB<span><input id="qsoDV" type="number" min="0" max="40" step="0.5" inputmode="decimal" placeholder="nezměřeno"> dB</span></label>
+            <label>CW +dB<span><input id="qsoCW" type="number" min="0" max="40" step="0.5" inputmode="decimal" placeholder="nezměřeno"> dB</span></label>
+          </div>
+          <p class="note">Nech prázdné = neznámý provozní práh (hodnotí se laboratorní práh). Zadej jen vlastní kalibrovaný požadavek pro čitelnost; hodnoty nejsou automatickým „ziskem CW“. Přidávají se k prahu na obou přijímačích.</p>
+          <p class="note" id="sensitivityNote">FM: 0,18 µV (12 dB SINAD), DV: 0,2 µV (1 % BER), CW IC-705: 0,11 µV (500 Hz, 10 dB S/N). Užší CW filtr je pouze přibližný šumový model. RX parametry lze upravit pro jinou protistanici.</p>
+          <p class="note">Polarizace H/V vstupuje do modelu difrakce nad hladkou Zemí podle ITU-R P.526. Při nesouladu H/V, nebo neznámé polarizaci, nelze přijímací rezervu spolehlivě určit bez měření; ukazuji scénáře dodatečné ztráty 10/20/30 dB, nikoli automatický pevný odečet.</p>
+          <p class="note">Deklinace v ČR je kolem +5° (východní): buzola = zeměpisný azimut − deklinace. Pevné ztráty nezahrnují les, zástavbu, fading a mohou záviset na polarizaci.</p>
         </details>
       </div>
 
@@ -280,8 +320,9 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
           <summary>Jak to počítám</summary>
           <p><b>Terén:</b> AWS Terrain Tiles (různé zdrojové DEM). Lesy ani budovy nejsou samostatně modelovány; rozlišení a přesnost závisí na oblasti.</p>
           <p><b>Šíření:</b> útlum volného prostoru + Delta-Bullington (ITU-R P.526-16, §4.5) včetně hladké Země. Zakřivení s k-faktorem, nepočítá se les, zástavba, fading, rušení ani troposférické změny.</p>
-          <p><b>Modelová rezerva</b> = příjem − laboratorní citlivost, horší směr. <b class="t-ok">≥ 20 dB vysoká</b>, <b class="t-good">10–20 dB dobrá</b>, <b class="t-edge">0–10 dB nízká</b>, <b class="t-bad">&lt; 0 dB pod prahem</b>. Neměří pravděpodobnost QSO.</p>
+          <p><b>Modelová rezerva</b> = příjem − zvolený přijímací práh, horší směr. Výchozí je laboratorní citlivost; provozní práh lze nastavit zvlášť pro FM, DV a CW. <b class="t-ok">≥ 20 dB vysoká</b>, <b class="t-good">10–20 dB dobrá</b>, <b class="t-edge">0–10 dB nízká</b>, <b class="t-bad">&lt; 0 dB pod prahem</b>. Neměří pravděpodobnost QSO.</p>
           <p><b>Kopce a rozhledny</b> z OpenStreetMap (Overpass), ale výpočet je vždy ze zadané výšky antény nad místním terénem. Přístupnost stanoviště je nutné ověřit. Mapa OpenTopoMap / OSM; hledání Nominatim.</p>
+          <p><b>CW na 144 MHz:</b> vysílání vyžaduje stanici s CW (např. IC-705 s 5 W na baterii nebo max. 10 W při externích 13,8 V), nikoliv ID-52E. 144,050 MHz je centrum CW aktivity IARU Region 1. Na slabosignálových CW spojeních se běžně používá horizontální polarizace; souhlas polarizací obou stanic je zásadní.</p>
           <p>Je to neověřená predikce, nikoli záruka. Na místě dolaď směr a polarizaci, zvaž překážky v okolí a chybovost DEM.</p><p>Model: <a href="https://www.itu.int/rec/R-REC-P.526/en" target="_blank" rel="noopener noreferrer">ITU-R P.526</a>; terén: Mapzen / AWS Terrain Tiles. Veřejné služby mohou být nedostupné.</p>
         </details>
       </div>
@@ -305,7 +346,7 @@ html[data-theme=dark] .bg-good, html[data-theme=dark] .bg-edge{color:#111}
 <script>
 'use strict';
 /* =========================================================
-   2m Planner v2.2 — plánovač VKV spojení, model ITU-R P.526-16
+   2m Planner v2.3.1 — plánovač VKV spojení, model ITU-R P.526-16
    ========================================================= */
 const R_E = 6371008.8;
 const $ = s => document.querySelector(s);
@@ -537,21 +578,22 @@ function bullingtonAt(n, dKm, lam, hTs, hRs, aeM, sample) {
   const luc=J(vb);
   return {loss:luc+(1-Math.exp(-luc/6))*(10+0.02*dKm),index:vi,v:vb};
 }
-function sphericalOver(dKm, h1, h2, aeM, f) {
+function sphericalOver(dKm, h1, h2, aeM, f, pol="V") {
   const a=aeM/1000, eps=15, sigma=0.005, Khor=0.36*Math.pow(a*f,-1/3)*Math.pow((eps-1)**2+(18000*sigma/f)**2,-0.25);
-  const K=Khor*Math.hypot(eps,18000*sigma/f); // vertikální polarizace / pevná půda
-  const beta=1; // §3.1.1.2: vertikální polarizace >20 MHz nad zemí
+  // ITU-R P.526-16 Annex 1, Eq. (11a)/(12a), §3.1.1.1.
+  const K=pol==='H' ? Khor : Khor*Math.hypot(eps,18000*sigma/f);
+  const beta=1; // §3.1.1.2: obě lineární polarizace na 144 MHz nad pevninou
   const X=2.188*beta*Math.cbrt(f)*Math.pow(a,-2/3)*dKm;
   const Y=h=>9.575e-3*beta*Math.pow(f,2/3)*Math.pow(a,-1/3)*Math.max(0,h);
   const F=X>=1.6?11+10*Math.log10(X)-17.6*X:-20*Math.log10(X)-5.6488*Math.pow(X,1.425);
   const G=y=>{const B=beta*y;const raw=B>2?17.6*Math.sqrt(B-1.1)-5*Math.log10(B-1.1)-8:20*Math.log10(Math.max(1e-30,B+0.1*B**3));return Math.max(raw,2+20*Math.log10(K));};
   return Math.max(0,-F-G(Y(h1))-G(Y(h2)));
 }
-function sphericalLoss(dKm,h1,h2,aeM,f,lam) {
+function sphericalLoss(dKm,h1,h2,aeM,f,lam,pol="V") {
   h1=Math.max(0,h1);h2=Math.max(0,h2);
   const d=dKm*1000, los=Math.sqrt(2*aeM)*(Math.sqrt(h1)+Math.sqrt(h2));
-  if(d>=los) return sphericalOver(dKm,h1,h2,aeM,f);
-  if(h1+h2<1e-9) return sphericalOver(dKm,h1,h2,aeM,f);
+  if(d>=los) return sphericalOver(dKm,h1,h2,aeM,f,pol);
+  if(h1+h2<1e-9) return sphericalOver(dKm,h1,h2,aeM,f,pol);
   const m=d*d/(4*aeM*(h1+h2)), c=(h1-h2)/(h1+h2);
   const arg=Math.max(-1,Math.min(1,1.5*c*Math.sqrt(3*m/(m+1)**3)));
   const b=2*Math.sqrt((m+1)/(3*m))*Math.cos(Math.PI/3+Math.acos(arg)/3);
@@ -560,10 +602,10 @@ function sphericalLoss(dKm,h1,h2,aeM,f,lam) {
   const hreq=0.552*Math.sqrt(d1*d2*lam/d);
   if(h>=hreq) return 0;
   const aem=0.5*(d/(Math.sqrt(h1)+Math.sqrt(h2)))**2;
-  const Ah=sphericalOver(dKm,h1,h2,aem,f);
+  const Ah=sphericalOver(dKm,h1,h2,aem,f,pol);
   return Math.max(0,(1-h/hreq)*Ah);
 }
-function deltaBullington(e,n,D,lam,k,f,hA,hB) {
+function deltaBullington(e,n,D,lam,k,f,hA,hB,pol="V") {
   const d=D/1000, aeM=k*R_E, step=d/(n-1);
   const sample=i=> e[i]- (i/(n-1))*((n-1-i)/(n-1))*D*D/(2*aeM);
   const actual=bullingtonAt(n,d,lam,hA,hB,aeM,sample);
@@ -585,7 +627,10 @@ function deltaBullington(e,n,D,lam,k,f,hA,hB) {
   const hh1=Math.max(0,hA-Math.min(st,sample(0)));
   const hh2=Math.max(0,hB-Math.min(sr,sample(n-1)));
   const smooth=bullingtonAt(n,d,lam,hh1,hh2,aeM,()=>0);
-  const sph=sphericalLoss(d,hh1,hh2,aeM,f,lam);
+  // U neznámé nebo rozdílné polarizace bereme konzervativní parametr zemského povrchu;
+  // NENÍ to model polarizačního nesouladu mezi anténami.
+  const sph=pol==='?' ? Math.max(sphericalLoss(d,hh1,hh2,aeM,f,lam,'H'),sphericalLoss(d,hh1,hh2,aeM,f,lam,'V'))
+                      : sphericalLoss(d,hh1,hh2,aeM,f,lam,pol);
   return {loss:actual.loss+Math.max(0,sph-smooth.loss),actual:actual.loss,smooth:smooth.loss,sphere:sph};
 }
 /* a,b: {lat,lon,h[AGL]}; 1–60 m: FSPL-only s upozorněním na nevyhodnocený lokální terén. */
@@ -603,7 +648,7 @@ function evalLink(a,b,P,nMax,keep) {
   const hA=e[0]+a.h,hB=e[n-1]+b.h,lam=299.792458/P.f;
   let vm=-10,im=-1,edges=[];
   if(!short){[vm,im]=maxV(e,0,n-1,hA,hB,dx,lam);}
-  const dLoss=short?{loss:0,actual:0,smooth:0,sphere:0}:deltaBullington(e,n,D,lam,P.k,P.f,hA,hB);
+  const dLoss=short?{loss:0,actual:0,smooth:0,sphere:0}:deltaBullington(e,n,D,lam,P.k,P.f,hA,hB,P.surfacePol || "V");
   if(!Number.isFinite(dLoss.loss)||dLoss.loss<0)throw new RangeError('Neplatný difrakční útlum – zkontroluj výškový model');
   if(keep&&im>=0&&vm>-0.78) {
     edges.push([im,J(vm)]);
@@ -635,10 +680,13 @@ function maxV(e,i0,i1,h0,h1,dx,lam) {
 function budget(loss, P) {
   const up = dbm(P.me.p) + P.me.g + P.him.g - loss - P.other;   // u protistanice
   const down = dbm(P.him.p) + P.him.g + P.me.g - loss - P.other; // u mě
-  return {rxHim: up, rxMe: down, up: up - P.sens, down: down - P.sens, m: Math.min(up, down) - P.sens};
+  const upMargin = up - P.sensHim, downMargin = down - P.sensMe;
+  const labUp=up-(P.labSensHim ?? P.sensHim), labDown=down-(P.labSensMe ?? P.sensMe);
+  return {rxHim:up, rxMe:down, up:upMargin, down:downMargin,
+    m:Math.min(upMargin,downMargin), labM:Math.min(labUp,labDown), labUp, labDown};
 }
 const cat = m => m >= 20 ? 'ok' : m >= 10 ? 'good' : m >= 0 ? 'edge' : 'bad';
-const CAT_TXT = {ok: 'vysoká modelová rezerva', good: 'dobrá modelová rezerva', edge: 'nízká modelová rezerva', bad: 'pod laboratorním prahem'};
+const CAT_TXT = {ok: 'vysoká modelová rezerva', good: 'dobrá modelová rezerva', edge: 'nízká modelová rezerva', bad: 'pod zvoleným prahem'};
 const CAT_RANK = {ok: 0, good: 1, edge: 2, bad: 3};
 const CAT_RGB = {ok: [21, 128, 61], good: [101, 163, 13], edge: [217, 119, 6], bad: [220, 38, 38]};
 function sUnits(p) { const o = p + 93; if (o >= 0) return o < 1 ? 'S9' : 'S9+' + Math.round(o); return 'S' + Math.max(0, Math.round(9 + o / 6)); }
@@ -646,20 +694,38 @@ function sUnits(p) { const o = p + 93; if (o >= 0) return o < 1 ? 'S9' : 'S9+' +
 /* ---------- state ---------- */
 const ANT_ME = [['hb9cv', 'HB9CV (~5 dBi)', 5], ['half', 'Prut λ/2 (~0 dBi)', 0], ['duck', 'Původní pendrek (~−5 dBi)', -5], ['y3', 'Yagi 3 el (~7 dBi)', 7], ['y5', 'Yagi 5 el (~9 dBi)', 9], ['custom', 'Vlastní', null]];
 const ANT_HIM = [['duck', 'Ručka – pendrek (~−5 dBi)', -5], ['half', 'Ručka – prut λ/2 (~0 dBi)', 0], ['gp', 'GP / mobil (~2 dBi)', 2], ['col', 'Kolineár (~5 dBi)', 5], ['hb9cv', 'HB9CV (~5 dBi)', 5], ['yagi', 'Yagi (~9–12 dBi)', 10], ['custom', 'Vlastní', null]];
-const SENS = {FM: -122, DV: -121};
+// Icom official 2m specs at 50 ohms: ID-52E FM 0.18 uV / DV 0.20 uV;
+// IC-705 CW 0.11 uV at 500 Hz / 10 dB SNR, preamp ON. No guarantee of QSO quality.
+const uvToDbm = uv => 10 * Math.log10((uv * 1e-6) ** 2 / 50 * 1000);
+const SENS = {FM: uvToDbm(0.18), DV: uvToDbm(0.20), CW: uvToDbm(0.11)};
+const FREQ_DEFAULT = {FM:145.5, DV:145.375, CW:144.05};
+const CW_BWS = [100,250,500];
+function defaultSens(mode,bw=500) {
+  // Noise-limited approximation only, not a measured IC-705 100/250 Hz sensitivity.
+  return SENS[mode] + (mode==='CW'?10*Math.log10(bw/500):0);
+}
+function receiverSens(mode,bw,override) {
+  return override == null ? defaultSens(mode,bw) : override;
+}
 const PRESET_QTH = [{name: 'Zvičina (OK1KOB)', lat: 50.45472, lon: 15.69583}];
 const RADII = [2000, 5000, 10000, 20000, 30000];
 const DEF = {B: null, C: null, r: 10000,
   him: {p: 5, g: 2, h: 5, ant: 'gp'}, me: {p: 5, g: 5, h: 2, ant: 'hb9cv'},
-  mode: 'FM', f: 145.5, k: 1.33, decl: 5, other: 2, recent: []};
+  mode: 'FM', f: 145.5, k: 1.33, decl: 5, other: 2,
+  cwBw:500, cwSupply:'battery', polMe:'auto', polHim:'auto',
+  qsoExtra:{FM:null,DV:null,CW:null},rxMeSens:null,rxHimSens:null, recent: []};
 let S = load();
 function load() {
   let s = {};
   try { s = JSON.parse(localStorage.getItem('pl2m') || '{}'); } catch (e) {}
-  const st = {...structuredClone(DEF), ...(s && typeof s==='object' && !Array.isArray(s)?s:{}), him: {...DEF.him, ...(s?.him && typeof s.him==='object'?s.him:{})}, me: {...DEF.me, ...(s?.me && typeof s.me==='object'?s.me:{})}};
+  const st = {...structuredClone(DEF), ...(s && typeof s==='object' && !Array.isArray(s)?s:{}),
+    him: {...DEF.him, ...(s?.him && typeof s.him==='object'?s.him:{})},
+    me: {...DEF.me, ...(s?.me && typeof s.me==='object'?s.me:{})},
+    qsoExtra:{...DEF.qsoExtra,...(s?.qsoExtra && typeof s.qsoExtra==='object' && !Array.isArray(s.qsoExtra)?s.qsoExtra:{})}};
   // shared link overrides
   try {
     const h = new URLSearchParams(location.hash.slice(1));
+    if(h.get('v')==='31' && h.has('b')){st.C=null;st.cwSupply='battery';st.polMe='auto';st.polHim='auto';st.qsoExtra={FM:null,DV:null,CW:null};st.rxMeSens=null;st.rxHimSens=null;}
     const pt = v => { if (!v) return null; const parts=v.split(',');if(parts.length!==2||parts.some(x=>!x.trim()))return null;const [lat,lon]=parts.map(Number);return Number.isFinite(lat)&&Number.isFinite(lon)&&Math.abs(lat)<=85&&Math.abs(lon)<=180?{lat,lon}:null; };
     if (h.get('b')) { const p = pt(h.get('b')); if (p) st.B = {...p, name: h.get('bn') || 'Protistanice'}; }
     if (h.get('c')) { const p = pt(h.get('c')); if (p) st.C = {...p, name: h.get('cn') || 'Oblast'}; }
@@ -671,18 +737,42 @@ function load() {
     for (const [k,part,field,lo,hi] of [['hp','him','p',0.01,1000],['hg','him','g',-30,40],['hh','him','h',0,1000],['mp','me','p',0.01,100],['mg','me','g',-30,40],['mh','me','h',0,1000]]) {
       if(h.has(k)){const x=Number(h.get(k));if(Number.isFinite(x)&&x>=lo&&x<=hi)st[part][field]=x;}
     }
-    if (h.get('m') === 'DV' || h.get('m') === 'FM') st.mode = h.get('m');
+    if (['FM','DV','CW'].includes(h.get('m'))) {
+      st.mode=h.get('m');st.rxMeSens=null;st.rxHimSens=null;
+      if(!h.has('f'))st.f=FREQ_DEFAULT[st.mode];
+    }
+    if (CW_BWS.includes(Number(h.get('bw')))) st.cwBw=Number(h.get('bw'));
+    if (['battery','external'].includes(h.get('cs')))st.cwSupply=h.get('cs');
+    if (['auto','H','V','?'].includes(h.get('pm')))st.polMe=h.get('pm');
+    if (['auto','H','V','?'].includes(h.get('ph')))st.polHim=h.get('ph');
+    for(const [k,mode] of [['qf','FM'],['qd','DV'],['qc','CW']])if(h.has(k)){
+      const v=h.get(k);const x=Number(v);
+      if(v!==''&&Number.isFinite(x)&&x>=0&&x<=40)st.qsoExtra[mode]=x;
+    }
+    for(const [k,field] of [['sm','rxMeSens'],['sh','rxHimSens']])if(h.has(k)){
+      const x=Number(h.get(k));if(Number.isFinite(x)&&x>=-150&&x<=-80)st[field]=x;
+    }
   } catch (e) {}
   st.recent=Array.isArray(st.recent)?st.recent.filter(x=>x&&Number.isFinite(x.lat)&&Number.isFinite(x.lon)&&Math.abs(x.lat)<=85&&Math.abs(x.lon)<=180).slice(0,5):[];
   st.r=RADII.includes(st.r)?st.r:10000;
-  if(!['FM','DV'].includes(st.mode))st.mode='FM';
+  if(!['FM','DV','CW'].includes(st.mode))st.mode='FM';
+  if(!CW_BWS.includes(st.cwBw))st.cwBw=500;
+  if(!['battery','external'].includes(st.cwSupply))st.cwSupply='battery';
+  for(const part of ['polMe','polHim'])if(!['auto','H','V','?'].includes(st[part]))st[part]='auto';
+  for(const mode of ['FM','DV','CW']){
+    const v=st.qsoExtra[mode];
+    if(v!==null && (typeof v!=='number'||!Number.isFinite(v)||v<0||v>40))st.qsoExtra[mode]=null;
+  }
+  for(const field of ['rxMeSens','rxHimSens'])
+    if(st[field]!=null&&(!Number.isFinite(st[field])||st[field]<-150||st[field]>-80))st[field]=null;
   // localStorage není důvěryhodnější než sdílený odkaz: normalizovat i jeho hodnoty.
   const bounded=(value,def,lo,hi)=>typeof value==='number'&&Number.isFinite(value)&&value>=lo&&value<=hi?value:def;
   st.f=bounded(st.f,DEF.f,144,146);st.k=bounded(st.k,DEF.k,0.5,4);
   st.other=bounded(st.other,DEF.other,0,80);st.decl=bounded(st.decl,DEF.decl,-90,90);
   for(const part of ['me','him'])for(const [key,lo,hi] of [['g',-30,40],['h',0,1000],['p',0.01,1000]])
     st[part][key]=bounded(st[part][key],DEF[part][key],lo,hi);
-  if(![5,2.5,1,0.5,0.1].includes(st.me.p))st.me.p=DEF.me.p;
+  if(![10,5,2.5,1,0.5,0.1].includes(st.me.p))st.me.p=DEF.me.p;
+  st.me.p=Math.min(st.me.p,st.mode==='CW'&&st.cwSupply==='external'?10:5);
   if(!ANT_ME.some(a=>a[0]===st.me.ant))st.me.ant=DEF.me.ant;
   if(!ANT_HIM.some(a=>a[0]===st.him.ant))st.him.ant=DEF.him.ant;
   for(const w of ['B','C']) {
@@ -694,7 +784,7 @@ function load() {
 }
 let saveT;
 function save() { clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem('pl2m', JSON.stringify(S)); } catch (e) {} }, 200); }
-function configKey(){return JSON.stringify([S.B?.lat,S.B?.lon,S.C?.lat,S.C?.lon,S.r,S.me.p,S.me.g,S.me.h,S.him.p,S.him.g,S.him.h,S.mode,S.f,S.k,S.other]);}
+function configKey(){return JSON.stringify([S.B?.lat,S.B?.lon,S.C?.lat,S.C?.lon,S.r,S.me.p,S.me.g,S.me.h,S.him.p,S.him.g,S.him.h,S.mode,S.f,S.k,S.other,S.cwBw,S.cwSupply,S.polMe,S.polHim,S.qsoExtra.FM,S.qsoExtra.DV,S.qsoExtra.CW,S.rxMeSens,S.rxHimSens]);}
 function invalidateResults(){
   if(!RES&&!SEL)return;RES=null;SEL=null;PROF=null;
   if(resLayer)resLayer.clearLayers();if(selLine&&map){map.removeLayer(selLine);selLine=null;}
@@ -702,8 +792,34 @@ function invalidateResults(){
   $('#resBody').className='empty';$('#resBody').innerHTML='Parametry se změnily — znovu spusť <b>Najdi místo</b>.';
   $('#profBody').className='empty';$('#profBody').textContent='Profil není aktuální; spusť nový výpočet.';
 }
+function modePolar(mode){return mode==='CW'?'H':'V';}
+function resolvedPolar(value,mode){return value==='auto'?modePolar(mode):value;}
+function polarization(mode,me=S.polMe,him=S.polHim){
+  const a=resolvedPolar(me,mode),b=resolvedPolar(him,mode);
+  return {me:a,him:b,surfacePol:a===b&&a!=='?'?a:'?',
+    issue:a==='?'||b==='?'?'unknown':a!==b?'cross':'aligned'};
+}
+function powerLimit(mode=S.mode,supply=S.cwSupply){return mode==='CW'&&supply==='external'?10:5;}
+function operationalExtra(mode){return S.qsoExtra[mode] == null ? 0 : S.qsoExtra[mode];}
 function params() {
-  return {f: S.f, k: S.k, other: S.other, sens: SENS[S.mode], me: {...S.me}, him: {...S.him}};
+  const labSensMe=receiverSens(S.mode,S.cwBw,S.rxMeSens);
+  const labSensHim=receiverSens(S.mode,S.cwBw,S.rxHimSens);
+  const pol=polarization(S.mode), extra=operationalExtra(S.mode);
+  return {f:S.f,k:S.k,other:S.other,mode:S.mode,qualityKnown:S.qsoExtra[S.mode]!=null,
+    qualityExtra:extra,labSensMe,labSensHim,sensMe:labSensMe+extra,sensHim:labSensHim+extra,
+    pol, surfacePol:pol.surfacePol,me:{...S.me},him:{...S.him}};
+}
+
+function polarizationNotice(pol){
+  if(pol.issue==='aligned')return '';
+  const what=pol.issue==='cross'?'Nesoulad H/V mezi anténami':'Neznámá polarizace jedné nebo obou stanic';
+  return `<div class="rf-alert"><strong>⚠ ${what}.</strong> Přijímací rezerva NEZAHRNUJE křížovou polarizační ztrátu.
+    Skutečný příjem může být výrazně slabší; scénáře níže jsou pouze ilustrací, nikoliv spolehlivostní interval.</div>`;
+}
+function polarizationScenarios(m,pol){
+  if(pol.issue==='aligned')return '';
+  return `<div class="rf-hint">Co kdyby nesoulad přidal další ztrátu: 10 dB → ${sgn(m-10,1)} dB;
+     20 dB → ${sgn(m-20,1)} dB; 30 dB → ${sgn(m-30,1)} dB. Skutečná ztráta není známa.</div>`;
 }
 
 /* ---------- UI: form ---------- */
@@ -714,9 +830,24 @@ function fillSelect(sel, list, val) {
 function writeForm() {
   fillSelect($('#hisAnt'), ANT_HIM, S.him.ant); fillSelect($('#meAnt'), ANT_ME, S.me.ant);
   $('#hisG').value = S.him.g; $('#hisP').value = S.him.p; $('#hisH').value = S.him.h;
-  $('#meG').value = S.me.g; $('#meP').value = String(S.me.p); $('#meH').value = S.me.h;
+  $('#meG').value = S.me.g; $('#meH').value = S.me.h;
+  $('#meP option[value="10"]').disabled=powerLimit()<10;
+  $('#meP').value = String(S.me.p);
+  $('#mePol').value=S.polMe;$('#himPol').value=S.polHim;
+  $('#cwSupply').value=S.cwSupply;
+  $('#cwSupplyRow').hidden=S.mode!=='CW';
+  $('#polNotice').hidden=polarization(S.mode).issue==='aligned';
+  $('#polNotice').textContent=polarization(S.mode).issue==='cross'?'⚠ Antény mají nesouhlasnou polarizaci H/V. Rezerva nezahrnuje polarizační útlum.':'⚠ Polarizace antén není známá. Rezerva může být významně nadhodnocena.';
   $('#fIn').value = S.f; $('#kIn').value = S.k; $('#declIn').value = S.decl; $('#lossIn').value = S.other;
-  $('#sensIn').value = SENS[S.mode];
+  $('#meSensIn').value = receiverSens(S.mode,S.cwBw,S.rxMeSens).toFixed(1);
+  $('#himSensIn').value = receiverSens(S.mode,S.cwBw,S.rxHimSens).toFixed(1);
+  $('#cwBw').value = String(S.cwBw);
+  for(const mode of ['FM','DV','CW'])$('#qso'+mode).value=S.qsoExtra[mode] == null ? '' : String(S.qsoExtra[mode]);
+  $('#cwCtrl').hidden = S.mode !== 'CW';
+  $('#rigLabel').textContent = S.mode === 'CW' ? 'IC-705' : 'ID-52E';
+  $('#rigInfo').textContent = S.mode === 'CW'
+    ? `CW: IC-705, 0,1–${powerLimit()} W (${S.cwSupply==='external'?'externích 13,8 V':'baterie'}). ID-52E neumí CW. Výchozí polarizace H; zkontroluj skutečnou orientaci.`
+    : 'FM/DV: výchozí stanice ID-52E. Protistanice má stejnou typovou citlivost, pokud ji neupravíš.';
   $$('#modeSeg button').forEach(b => b.classList.toggle('on', b.dataset.mode === S.mode));
   if (S.B) $('#bIn').value = S.B.name || ''; if (S.C) $('#cIn').value = S.C.name || '';
   renderResolved('B'); renderResolved('C'); renderChips();
@@ -725,7 +856,10 @@ function readNum(id, def) { const v = parseFloat(String($(id).value).replace(','
 function readForm() {
   const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
   S.him.g=clamp(readNum('#hisG',S.him.g),-30,40); S.him.p=clamp(readNum('#hisP',S.him.p),0.01,1000); S.him.h=clamp(readNum('#hisH',S.him.h),0,1000);
-  S.me.g=clamp(readNum('#meG',S.me.g),-30,40); S.me.p=readNum('#meP',S.me.p); S.me.h=clamp(readNum('#meH',S.me.h),0,1000);
+  S.me.g=clamp(readNum('#meG',S.me.g),-30,40);
+  const requestedPower=readNum('#meP',S.me.p);
+  S.me.p=[0.1,0.5,1,2.5,5,10].includes(requestedPower)?Math.min(requestedPower,powerLimit()):Math.min(S.me.p,powerLimit());
+  S.me.h=clamp(readNum('#meH',S.me.h),0,1000);
   S.f=clamp(readNum('#fIn',S.f),144,146); S.k=clamp(readNum('#kIn',S.k),0.5,4);
   const oldDecl=S.decl;
   S.decl = Math.max(-90,Math.min(90,readNum('#declIn', S.decl))); S.other = Math.max(0,Math.min(80,readNum('#lossIn', S.other)));
@@ -1092,10 +1226,33 @@ function spotCard(s, idx) {
       <span class="pill bg-${c}">${sgn(b.m)} dB</span>
     </div>
     ${aimBlock(s)}
-    <div class="sp-meta">${CAT_TXT[c]} · ${fres} · náměr ${sgn(r.elev, 1)}° · teoretické S u protistanice ${sUnits(b.rxHim)} · ${llToLoc(s.lat, s.lon, 6)}${warn}</div>
+    <div class="sp-meta">${RES?.P?.qualityKnown?'provozní předpoklad':'laboratorní práh'} · ${CAT_TXT[c]}${RES?.P?.pol?.issue!=='aligned'?' · ⚠ polarizace nezapočtena':''} · ${fres} · náměr ${sgn(r.elev, 1)}° · teoretické S u protistanice ${sUnits(b.rxHim)} · ${llToLoc(s.lat, s.lon, 6)}${warn}</div>
     ${towerLine}
     <div class="sp-act"><button data-prof="${s.id}">Profil</button>${s.kind === 'here' ? '' : navLinks(s)}</div>
   </div>`;
+}
+function modeComparison(spot,current){
+  if(!spot||!spot.r)return '';
+  const rows=[];
+  for(const mode of ['FM','DV','CW']){
+    const labMe=mode===S.mode?current.labSensMe:defaultSens(mode,S.cwBw);
+    const labHim=mode===S.mode?current.labSensHim:defaultSens(mode,S.cwBw);
+    const extra=operationalExtra(mode), known=S.qsoExtra[mode]!=null;
+    const pol=polarization(mode);
+    const power=Math.min(current.me.p,powerLimit(mode,S.cwSupply));
+    const p={...current,mode,f:mode===S.mode?current.f:FREQ_DEFAULT[mode],me:{...current.me,p:power},
+      labSensMe:labMe,labSensHim:labHim,sensMe:labMe+extra,sensHim:labHim+extra,
+      qualityExtra:extra,qualityKnown:known,pol,surfacePol:pol.surfacePol};
+    const r=evalLink({lat:spot.lat,lon:spot.lon,h:p.me.h},{...S.B,h:p.him.h},p,3000,false);
+    if(!r)continue;
+    const b=budget(r.loss,p);
+    const description=mode==='CW'?`IC-705 · ${S.cwBw} Hz`:'ID-52E';
+    rows.push(`<tr data-mode-row="${mode}"><td><b>${mode}</b> <span class="muted">${description} · ${nf(power,1)} W · ${pol.me}/${pol.him}${pol.issue!=='aligned'?' ⚠':''}</span></td>
+      <td>${sgn(b.labM,1)} dB</td><td>${known?`<b class="t-${cat(b.m)}">${sgn(b.m,1)} dB</b>`:'<span class="muted">—</span>'}</td></tr>`);
+  }
+  return `<div class="mode-compare"><b>Stejné stanoviště · režimy (nikoli srovnatelná kvalita QSO)</b>
+    <table><thead><tr><th>Mód a nastavení</th><th>Lab.</th><th>Provozní*</th></tr></thead><tbody>${rows.join('')}</tbody></table>
+    <small class="muted">*Provozní rezerva se zobrazí jen po tvém zadání přídavného požadavku v Pokročilých. Jde o uživatelský předpoklad, ne měření. Laboratorní kritéria FM 12 dB SINAD, DV 1 % BER, CW 10 dB S/N nelze přímo porovnávat. Při rozdílné polarizaci se křížová ztráta nezapočítává. Výkon je omezen možnostmi rádia; zisk antén v porovnání zůstává stejný (v praxi může být při změně polarizace jiný).</small></div>`;
 }
 let SHOW_ALL = false;
 function allSpots() { return RES ? [RES.here, ...RES.gridSp, ...RES.named] : []; }
@@ -1128,9 +1285,12 @@ function renderResults() {
   const B = S.B, Dbc = hav(S.C, B);
   let h = `<div class="card sum">
     Protistanice <b>${esc(B.name)}</b> · ${llToLoc(B.lat, B.lon, 6)} · ${nf(demAt(B.lat, B.lon))} m n. m.<br>
-    ${nf(P.him.p, P.him.p < 1 ? 1 : 0)} W · ${sgn(P.him.g)} dBi · ${nf(P.him.h)} m nad zemí &nbsp;|&nbsp; ty: ${nf(P.me.p, P.me.p < 1 ? 1 : 0)} W · ${sgn(P.me.g)} dBi · ${S.mode}<br>
+    ${nf(P.him.p, P.him.p < 1 ? 1 : 0)} W · ${sgn(P.him.g)} dBi · ${nf(P.him.h)} m nad zemí &nbsp;|&nbsp; ty: ${nf(P.me.p, P.me.p < 1 ? 1 : 0)} W · ${sgn(P.me.g)} dBi · <b>${S.mode}</b> ${S.mode==='CW'?'(IC-705)':'(ID-52E)'} · ${nf(S.f,3)} MHz<br>
+    ${P.qualityKnown?'Provozní':'Laboratorní'} RX práh já ${nf(P.sensMe,1)} dBm, RX protistanice ${nf(P.sensHim,1)} dBm${P.qualityKnown?` (požadavek +${nf(P.qualityExtra,1)} dB)`:''}<br>
+    Polarizace: já ${P.pol.me}, protistanice ${P.pol.him}; nesoulad není součástí přijímacího rozpočtu<br>
     Okruh <b>${S.r / 1000} km</b> · střed: ${esc(S.C.name)} · k protistanici ${nf(Dbc / 1000)} km, směr ${az3(brg(S.C, B))}°
   </div>`;
+  h+=polarizationNotice(P.pol);
   R.reco=reco;
   if (reco) {
     const r = reco.b2 && reco.b2.m > reco.b.m ? reco.r2 : reco.r, b = reco.b2 && reco.b2.m > reco.b.m ? reco.b2 : reco.b;
@@ -1139,6 +1299,8 @@ function renderResults() {
       <div class="ct">➜ ${esc(recoTxt)}</div>
       <div class="reco-main">${target}${target ? '<br>' : ''}miř ${az3(r.az)}° <span style="color:var(--muted);font-weight:600">(buzola ${az3((r.az - S.decl + 360) % 360)}°)</span></div>
       <div class="reco-sub">${reco.kind === 'here' ? '' : nf(reco.dist / 1000, 1) + ' km ' + dir8(reco.brgC) + ' od středu oblasti · '}modelová rezerva <b class="t-${cat(b.m)}">${sgn(b.m)} dB</b> · ${nf(r.D / 1000)} km k protistanici${r.diff>=15?' · <b>velká difrakce: vyšší nejistota</b>':''}</div>
+      ${polarizationScenarios(b.m,P.pol)}
+      ${modeComparison(reco,P)}
       ${alt ? `<div class="reco-sub">Nejsilnější v okruhu: <b data-name="${alt.id}">${spotTitle(alt)}</b> — ${nf(alt.dist / 1000, 1)} km ${dir8(alt.brgC)}, <b class="t-${cat(alt.best)}">${sgn(alt.best)} dB</b> <a href="#" data-sel="${alt.id}">ukázat</a></div>` : ''}
       <div class="sp-act"><button data-prof="${reco.id}">Profil</button>${reco.kind === 'here' ? '' : navLinks(reco)}</div>
     </div>`;
@@ -1326,9 +1488,13 @@ async function share(){
   readForm();
   if(!S.B){toast('Nejdřív zadej protistanici.');return;}
   const h=new URLSearchParams();
-  h.set('v','2');h.set('b',S.B.lat.toFixed(6)+','+S.B.lon.toFixed(6));h.set('bn',S.B.name||'Protistanice');
+  h.set('v','31');h.set('b',S.B.lat.toFixed(6)+','+S.B.lon.toFixed(6));h.set('bn',S.B.name||'Protistanice');
   if(S.C&&S.C.name!=='Moje poloha'){h.set('c',S.C.lat.toFixed(6)+','+S.C.lon.toFixed(6));h.set('cn',S.C.name||'Oblast');}
-  for(const [k,v] of [['r',S.r],['hp',S.him.p],['hg',S.him.g],['hh',S.him.h],['mp',S.me.p],['mg',S.me.g],['mh',S.me.h],['m',S.mode],['f',S.f],['k',S.k],['o',S.other],['de',S.decl]])h.set(k,v);
+  for(const [k,v] of [['r',S.r],['hp',S.him.p],['hg',S.him.g],['hh',S.him.h],['mp',S.me.p],['mg',S.me.g],['mh',S.me.h],['m',S.mode],['f',S.f],['k',S.k],['o',S.other],['de',S.decl],['bw',S.cwBw]])h.set(k,v);
+  h.set('cs',S.cwSupply);h.set('pm',S.polMe);h.set('ph',S.polHim);
+  for(const [k,mode] of [['qf','FM'],['qd','DV'],['qc','CW']])if(S.qsoExtra[mode]!=null)h.set(k,S.qsoExtra[mode]);
+  if(S.rxMeSens!=null)h.set('sm',S.rxMeSens);
+  if(S.rxHimSens!=null)h.set('sh',S.rxHimSens);
   const url=location.href.split('#')[0]+'#'+h.toString();
   try{
     if(navigator.share){await navigator.share({title:'2m Planner · plán',text:'2m spojení → '+S.B.name,url});return;}
@@ -1357,10 +1523,54 @@ function bind() {
   $('#hisAnt').onchange = e => { const a = ANT_HIM.find(x => x[0] === e.target.value); S.him.ant = a[0]; if (a[2] != null) $('#hisG').value = a[2]; readForm(); };
   $('#meAnt').onchange = e => { const a = ANT_ME.find(x => x[0] === e.target.value); S.me.ant = a[0]; if (a[2] != null) $('#meG').value = a[2]; readForm(); };
   ['#hisG', '#meG'].forEach(id => $(id).addEventListener('input', () => { const sel = id === '#hisG' ? '#hisAnt' : '#meAnt'; $(sel).value = 'custom'; (id === '#hisG' ? S.him : S.me).ant = 'custom'; readForm(); }));
-  $$('#tab-in input[type=number], #tab-in select').forEach(i=>{
+  $$('#tab-in input[type=number]:not(#meSensIn):not(#himSensIn), #tab-in select:not(#cwBw):not(#mePol):not(#himPol):not(#cwSupply)').forEach(i=>{
     i.addEventListener('input',readForm);i.addEventListener('change',readForm);
   });
-  $$('#modeSeg button').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode; if(RES&&RES.key!==configKey())invalidateResults();save();writeForm();});
+  const setMode = mode => {
+    if(S.mode===mode)return;
+    readForm();
+    S.mode=mode; S.f=FREQ_DEFAULT[mode];
+    S.me.p=Math.min(S.me.p,powerLimit());
+    // Specifications are mode-dependent; manual values from previous modes do not carry over.
+    S.rxMeSens=null;S.rxHimSens=null;
+    if(RES)invalidateResults();save();writeForm();
+    if(mode==='CW')toast('CW vyžaduje IC-705 nebo jinou all-mode stanici; ID-52E CW neumí.',5500);
+  };
+  $$('#modeSeg button').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+  for(const [id,key] of [['#mePol','polMe'],['#himPol','polHim']]){
+    $(id).onchange=e=>{S[key]=['auto','H','V','?'].includes(e.target.value)?e.target.value:'auto';invalidateResults();writeForm();save();};
+  }
+  $('#cwSupply').onchange=e=>{
+    S.cwSupply=e.target.value==='external'?'external':'battery';
+    S.me.p=Math.min(S.me.p,powerLimit());
+    invalidateResults();writeForm();save();
+  };
+  for(const mode of ['FM','DV','CW']){
+    $('#qso'+mode).addEventListener('change',e=>{
+      const raw=e.target.value.trim().replace(',','.');
+      const value=raw===''?null:Number(raw);
+      if(value===null||(Number.isFinite(value)&&value>=0&&value<=40)){
+        S.qsoExtra[mode]=value;
+      }else toast('Provozní rezerva musí být 0–40 dB; neplatný vstup jsem ignoroval.');
+      invalidateResults();writeForm();save();
+    });
+  }
+  $('#cwBw').onchange=e=>{
+    S.cwBw=CW_BWS.includes(Number(e.target.value))?Number(e.target.value):500;
+    if(RES)invalidateResults();writeForm();save();
+  };
+  for(const [id,field] of [['#meSensIn','rxMeSens'],['#himSensIn','rxHimSens']]){
+    $(id).addEventListener('change',()=>{
+      const raw=$(id).value.trim().replace(',','.');
+      const v=raw===''?null:Number(raw);
+      if(v===null)S[field]=null;
+      else if(Number.isFinite(v)&&v>=-150&&v<=-80){
+        S[field]=Math.abs(v-defaultSens(S.mode,S.cwBw))<0.06?null:v;
+      }else toast('Citlivost musí být v rozmezí −150 až −80 dBm; hodnota zůstala beze změny.');
+      if(RES)invalidateResults();writeForm();save();
+    });
+  }
+  $('#sensReset').onclick=()=>{S.rxMeSens=null;S.rxHimSens=null;if(RES)invalidateResults();writeForm();save();};
   $('#heatTgl').onchange = e => { if (!heatLayer) return; e.target.checked ? heatLayer.addTo(resLayer) : resLayer.removeLayer(heatLayer); };
   const setHdr = () => document.documentElement.style.setProperty('--hdr', $('#top').offsetHeight + 'px');
   setHdr(); window.addEventListener('resize', () => { setHdr(); if (SEL) drawProfile(); map && map.invalidateSize(); });
